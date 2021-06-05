@@ -7,7 +7,11 @@
 */
 
 #include <iostream>
-#include <Windows.h>
+#ifdef _WIN32
+	#include <Windows.h>
+#else
+	#include <clocale>
+#endif
 
 // Дробь
 class Fraction
@@ -192,10 +196,13 @@ public:
 
 int main()
 {
-	// добавить поддержку кирилиицы
+// добавить поддержку кирилиицы
+#ifdef _WIN32
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-
+#else
+	setlocale(LC_ALL, "Russian");
+#endif
 	// объявить два объекта класса Fraction
 	Fraction a;
 	Fraction b;
@@ -258,6 +265,6 @@ int main()
 	std::cout << " (" << tmp.asFloat() << ")\n\n";
 
 	// завершение программы
-	_getwch();
+	std::cin.get();
 	return 0;
 }
