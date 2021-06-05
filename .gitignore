@@ -1,3 +1,7 @@
 # build files
 *.exe
+# temp files
 *.txt
+# archives
+*.rar
+*.zip
