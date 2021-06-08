@@ -1,2 +1,2 @@
 g++
-%cpp -std=c++17
+%cpp %h -std=c++17

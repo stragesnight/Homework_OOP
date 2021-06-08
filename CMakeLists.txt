@@ -1,7 +1,25 @@
+# create cache variable for source path
+set(SRC_DIR "./" CACHE STRING "some uther-specified option")
+
+# configure CMake version and C++ 
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD, 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# add project
 project(Homework_OOP VERSION 1.0)
-add_executable(task01_with_OOP DZ_03/task01_with_OOP.cpp)
-add_executable(task01_without_OOP DZ_03/task01_without_OOP.cpp)
+
+# add all source files in folder
+file(GLOB APP_SOURCES ${SRC_DIR}/*.cpp)
+
+message("SRC_DIR is ${SRC_DIR}")
+message("APP_SOURCES is ${APP_SOURCES}")
+
+foreach(srcfile ${APP_SOURCES})
+    message("srcfile is ${srcfile}")
+    get_filename_component(execname ${srcfile} NAME_WE)
+    add_executable(${execname} ${srcfile})
+endforeach(srcfile ${APP_SOURCES})
+
+#add_executable(task01_with_OOP DZ_03/task01_with_OOP.cpp)
+#add_executable(task01_without_OOP DZ_03/task01_without_OOP.cpp)

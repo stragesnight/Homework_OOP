@@ -7,3 +7,5 @@
 # archives
 *.rar
 *.zip
+
+compile_commands.json
