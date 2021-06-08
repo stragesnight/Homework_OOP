@@ -4,8 +4,6 @@
 # build files
 *.exe
 *.out
-# temp files
-*.txt
 # archives
 *.rar
 *.zip
