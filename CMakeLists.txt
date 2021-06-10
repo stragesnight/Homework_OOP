@@ -1,25 +1,29 @@
-# create cache variable for source path
-set(SRC_DIR "./" CACHE STRING "some uther-specified option")
+# cache string for directory containing source files
+set(SRC_DIR "./" CACHE STRING "some__cache__for__user__input")
+# variable project name
+set(PROJ_NAME StudentGrades)
 
-# configure CMake version and C++ 
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD, 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# add project
-project(Homework_OOP VERSION 1.0)
+project(${PROJ_NAME})
 
-# add all source files in folder
-file(GLOB APP_SOURCES ${SRC_DIR}/*.cpp)
+# add files to project
+file(GLOB SOURCE_FILES ${SRC_DIR}/*.cpp)
+file(GLOB HEADER_FILES ${SRC_DIR}/*.h)
 
-message("SRC_DIR is ${SRC_DIR}")
-message("APP_SOURCES is ${APP_SOURCES}")
+foreach(srcfile ${SOURCE_FILES})
+    get_filename_component(filename ${srcfile} NAME_WE)
+    if(NOT filename STREQUAL "main")
+        add_library(${filename} ${srcfile})
+        list(APPEND LIB_LIST ${filename})
+        message("added static library ${filename}")
+    endif()
+endforeach(srcfile ${SOURCE_FILES})
 
-foreach(srcfile ${APP_SOURCES})
-    message("srcfile is ${srcfile}")
-    get_filename_component(execname ${srcfile} NAME_WE)
-    add_executable(${execname} ${srcfile})
-endforeach(srcfile ${APP_SOURCES})
+include_directories(${SRC_DIR}/)
 
-#add_executable(task01_with_OOP DZ_03/task01_with_OOP.cpp)
-#add_executable(task01_without_OOP DZ_03/task01_without_OOP.cpp)
+add_executable(${PROJ_NAME} ${SRC_DIR}/main.cpp)
+
+target_link_libraries(${PROJ_NAME} PUBLIC ${LIB_LIST})
