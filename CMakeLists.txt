@@ -1,7 +1,7 @@
 # cache string for directory containing source files
 set(SRC_DIR "./" CACHE STRING "some__cache__for__user__input")
 # variable project name
-set(PROJ_NAME StudentGrades)
+get_filename_component(PROJ_NAME ${SRC_DIR} NAME)
 
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD, 17)

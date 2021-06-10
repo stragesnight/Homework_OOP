@@ -1,87 +1,73 @@
 ﻿/*
-	-= ДЗ №5, Задание №1 =-
-		Ученик: Шелест Александр
-	
-	Реализовать класс Дробь. Необходимо хранить числитель и знаменатель 
-    в качестве переменных-членов.
-	Реализовать методы для ввода данных в переменные-члены 
-    и для выполнения арифметических операций.
-    Класс вынести в отдельный заголовочнй файл.
-*/
+    -= ДЗ №4, Задание №1 =-
+        Ученик: Шелест Александр
+
+    Создать класс "Лифт", обеспечивающий:
+        - установку диапазона движения лифта;
+        - включение / выключение лифта;
+        - возвращение текущего состояния лифта;
+        - возвращение текущего положения лифта;
+        - обработку вызова лифта.
+ */
 
 #include <iostream>
-#include <clocale>
-#include "Fraction.h"
+#include "Lift.h"
+
+#define step_test(func) std::cin.get(); std::cout << "<-- test action -->\n"; func
+
+void displayLiftInfo(Lift& lift)
+{
+    std::cout << "===============\n";
+    std::cout << "|| LIFT INFO ||\n";
+    std::cout << "===============\n";
+
+    std::cout << "Lift: { " << lift.getMinFloor() << ", " << lift.getMaxFloor() << " }\n";
+    std::cout << "\tcurrent floor - " << lift.getCurrentFloor() << '\n';
+    std::cout << "\tstate - ";
+    if (lift.getState() == WORKING)
+        std::cout << "working\n\n";
+    else
+        std::cout << "not working\n\n";
+}
 
 int main()
 {
-// добавить поддержку кирилиицы
-	setlocale(LC_ALL, "Russian");
-	// объявить два объекта класса Fraction
-	Fraction a;
-	Fraction b;
 
-	// вывести начальный текст на экран
-	std::cout << "\t-= ДЗ №4, Задание №1 =-\n";
-	std::cout << "Реализовать класс Дробь. Необходимо хранить числитель и знаменатель в качестве переменных-членов.\n";
-	std::cout << "Реализовать методы для ввода данных в переменные-члены и для выполнения арифметических операций.\n";
-    std::cout << "Класс вынести в отдельный заголовочный файл.\n\n";
+    std::cout << "-= ДЗ №4, Задание №1 =-\n\t"
+        << "Ученик: Шелест Александр\n\n"
+        << "Создать класс \"Лифт\", обеспечивающий:\n\t"
+        << "- установку диапазона движения лифта;\n\t"
+        << "- включение / выключение лифта;\n\t"
+        << "- возвращение текущего состояния лифта;\n\t"
+        << "- возвращение текущего положения лифта;\n\t"
+        << "- обработку вызова лифта.;\n\n";
 
-	// ввод данных с клавиатуры и обновление полей дроби
-	int input;
-	std::cout << "Введите первое дробное число (пример: ввод \"5 6\" соответствует дроби 5/6): ";
-	std::cin >> input;
-	a.setNumerator(input);
-	std::cin >> input;
-	a.setDenominator(input);
+    std::cout << "Шагайте по тесту, нажимая клавишу Enter...\n";
 
-	std::cout << "Введите второе дробное число: ";
-	std::cin >> input;
-	b.setNumerator(input);
-	std::cin >> input;
-	b.setDenominator(input);
+    step_test(Lift lift(-2, 12));
 
-	std::cout << "\nДробь А: ";
-	a.print();
-	std::cout << " (" << a.asFloat() << ")";
+    step_test(displayLiftInfo(lift));
 
-	std::cout << "\nДробь Б: ";
-	b.print();
-	std::cout << " (" << b.asFloat() << ")";
+    step_test(lift.setMaxFloor(-2));
+    step_test(lift.setMaxFloor(14));
+    
+    step_test(displayLiftInfo(lift));
 
-	std::cout << "\n\nОбратите внимание - дроби сокращаются автоматически.\n";
+    step_test(lift.setMinFloor(0));
+    step_test(lift.setMinFloor(14));
+    step_test(lift.setMinFloor(24));
+    step_test(lift.setMaxFloor(0));
 
-	// сложение
-	Fraction tmp = a;
-	tmp.add(b);
-	std::cout << "\n\nА + Б = ";
-	tmp.print();
-	std::cout << " (" << tmp.asFloat() << ")";
+    step_test(displayLiftInfo(lift));
 
-	// вычитание
-	tmp = a;
-	tmp.subtract(b);
-	std::cout << "\nА - Б = ";
-	tmp.print();
-	std::cout << " (" << tmp.asFloat() << ")";
+    step_test(lift.requestLift(5));
+    step_test(lift.requestLift(13));
+    step_test(lift.requestLift(-3));
+    step_test(lift.setMinFloor(-10));
+    step_test(lift.requestLift(-2));
 
-	// умножение
-	tmp = a;
-	tmp.multiply(b);
-	std::cout << "\nА * Б = ";
-	tmp.print();
-	std::cout << " (" << tmp.asFloat() << ")";
+    step_test(displayLiftInfo(lift));
 
-	// деление
-	tmp = a;
-	tmp.divide(b);
-	std::cout << "\nА / Б = ";
-	tmp.print();
-	std::cout << " (" << tmp.asFloat() << ")\n\n";
-
-	// завершение программы
-    std::cout << "\n\nНажмите любую клавишу для выхода из программы...";
-    std::cin.ignore(1, '\0');
-	std::cin.get();
-	return 0;
+    return 0; 
 }
+
