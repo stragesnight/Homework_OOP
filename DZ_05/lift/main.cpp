@@ -11,10 +11,13 @@
  */
 
 #include <iostream>
+#include <clocale>
 #include "Lift.h"
 
+// макрос для пошаговой отладки
 #define step_test(func) std::cin.get(); std::cout << "<-- test action -->\n"; func
 
+// вывести информацию о лифте на экран используя геттеры
 void displayLiftInfo(Lift& lift)
 {
     std::cout << "===============\n";
@@ -32,6 +35,8 @@ void displayLiftInfo(Lift& lift)
 
 int main()
 {
+    // добавить поддержку кириллицы
+    setlocale(LC_ALL, "");
 
     std::cout << "-= ДЗ №4, Задание №1 =-\n\t"
         << "Ученик: Шелест Александр\n\n"
@@ -44,6 +49,7 @@ int main()
 
     std::cout << "Шагайте по тесту, нажимая клавишу Enter...\n";
 
+    // начало шагов теста
     step_test(Lift lift(-2, 12));
 
     step_test(displayLiftInfo(lift));

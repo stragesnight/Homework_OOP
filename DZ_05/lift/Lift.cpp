@@ -6,8 +6,8 @@
 #else
     #include <unistd.h>     // sleep()
 #endif
-#include <iostream>
-#include "Lift.h"
+#include <iostream>         // std::cout
+#include "Lift.h"           // заголовочный файл класса
 
 // сообщения для дебага программы
 // если ключевое слово _DBG_LOG было объявлено,
@@ -19,6 +19,8 @@
     #define dbgmsg(msg)
 #endif
 
+// макрос для выбора правильной функции пазуы
+// в зависимости от платформы
 #ifdef _WIN32
     #define wait_for(amonut) Sleep(amonut)
 #else
@@ -35,11 +37,14 @@ void Lift::handleRide(int dst)
 {
     dbgmsg("handleRide(" << dst << ")");
 
+    // начать работу лифта
     state = WORKING;
 
+    // рассчитать количество этажей и направление поездки
     int diff = dst - currentFloor;
     int delta = dst > currentFloor ? 1 : -1;
 
+    // цикл для изменения положения лифта
     dbgmsg("\tlift is heading to floor №" << dst);
     for (; currentFloor != dst; currentFloor += delta)
     {
@@ -47,11 +52,13 @@ void Lift::handleRide(int dst)
         wait_for(1000);
     }
 
+    // эмулировать ожидание лифта
     wait_for(2000);
 
     dbgmsg("\t\tDone.");
     dbgmsg("\t\tcurrentFloor - " << currentFloor);
 
+    // завершить работу лифта
     state = NOT_WORKING;
 }
 
@@ -72,11 +79,15 @@ Lift::Lift(int minFloor, int maxFloor)
     dbgmsg("Lift(" << minFloor << ", " << maxFloor << ")");
     dbgmsg("\tthis - " << this);
 
+    // присвоить минимальный этаж вручную
     this->minFloor = minFloor;
-    setMaxFloor(maxFloor);
-
+    // "поставить" лифт на минимальный этаж
     this->currentFloor = minFloor;
 
+    // присвоить максимальный этаж через сеттер
+    setMaxFloor(maxFloor);
+
+    // объявить, что лифт свободен
     this->state = NOT_WORKING;
 }
 
@@ -85,6 +96,7 @@ Lift::~Lift()
     dbgmsg("~Lift()");
     dbgmsg("\tthis - " << this);
 
+    // обнулить поля
     minFloor = 0;
     maxFloor = 0;
     
@@ -105,6 +117,7 @@ void Lift::setMinFloor(int minFloor)
 {
     dbgmsg("setMinFloor(" << minFloor << ")");
 
+    // проверить, одинаковы ли этажи
     if (minFloor == this->maxFloor)
     {
         dbgmsg("\tminFloor == this->maxFloor, skipping.");
@@ -115,6 +128,7 @@ void Lift::setMinFloor(int minFloor)
 
     this->minFloor = minFloor;
 
+    // проверить диапазон на корректность
     if (this->maxFloor < this->minFloor)
     {
         dbgmsg("\t\tthis->maxFloor < this->minFloor, swapping.");
@@ -128,6 +142,7 @@ void Lift::setMaxFloor(int maxFloor)
 {
     dbgmsg("setMaxFloor(" << maxFloor << ")");
 
+    // проверить, одинаковы ли этажи
     if (maxFloor == this->minFloor)
     {
         dbgmsg("\tmaxFloor == this->minFloor, skipping.");
@@ -138,6 +153,7 @@ void Lift::setMaxFloor(int maxFloor)
 
     this->maxFloor = maxFloor;
 
+    // проверить диапазон на корректность
     if (this->maxFloor < this->minFloor)
     {
         dbgmsg("\t\tthis->maxFloor < this->minFloor, swapping.");
@@ -151,18 +167,21 @@ void Lift::requestLift(int dst)
 {
     dbgmsg("requestLift(" << dst << ")");
 
+    // проверить, свободен ли лифт
     if (state != NOT_WORKING)
     {
         dbgmsg("\tstate != NOT_WORKING, skipping.");
         return;
     }
 
+    // проверить, правильный ли этаж
     if (!validFloor(dst))
     {
         dbgmsg("\t!validFloor(dst), skipping.");
         return;
     }
 
+    // запустить механизм поездки
     handleRide(dst);
 }
 
