@@ -7,9 +7,10 @@
  * 	Создать функции для задания, отображения и поиска значений.
 */
 
-#include <iostream>
-#include <cmath>
-#include <clocale>
+#include <iostream> 					// std::cout; std::cin; ...
+#include <cmath> 						// fabs()
+#include <clocale> 						// setlocale()
+
 
 #if defined (_WIN32) || defined (_WIN64)
 # define clrscr() system("cls")
@@ -17,7 +18,7 @@
 # define clrscr() system("clear")
 #endif
 
-#define symval(v) #v << " - " << v
+// абсолютная резница между двумя значениями
 #define diff(a, b) fabs(fabs(a) - fabs(b))
 
 // Двигатель
@@ -55,7 +56,7 @@ public:
 	Automobile(float length, float clearance, const Engine& engine, 
 			float wheelDiameter, TRANSMISSION_TYPE transmission)
 	{
-		// скопировать значения параметров в поля
+		// Скопировать значения параметров в поля
 		
 		this->length = length;
 		this->clearance = clearance;
@@ -67,7 +68,7 @@ public:
 	// Деструктор
 	~Automobile()
 	{
-		// обнулить значения полей
+		// Обнулить значения полей
 
 		length = clearance = wheelDiameter = 0;
 		engine = {};
@@ -123,10 +124,13 @@ public:
 		const char* names[] = { "длина", "клиренс", "объем двигателя", "мощность двигателя", "диаметр колёс" };
 		const float values[] = { length, clearance, engine.volume, engine.power, wheelDiameter };
 
+		// Для каждого поля...
 		for (int i = 0; i < 5; i++)
 		{
+			// Если его разница с запросом меньше, чем ранее записанная...
 			if (diff(values[i], query) < minDiff)
 			{
+				// Обновить данные
 				closestMatch = i;
 				minDiff = diff(values[i], query);
 			}
@@ -138,7 +142,7 @@ public:
 		return values[closestMatch];
 	}
 
-	// получить условный "счёт" машины для сравнения с другими
+	// Получить условный "счёт" машины для сравнения с другими
 	operator float()
 	{
 		return (length + clearance + (engine.volume * engine.power) + wheelDiameter);
@@ -148,6 +152,7 @@ public:
 
 int main()
 {
+	// Поддержка кириллицы
 	setlocale(LC_ALL, "rus");
 
 	std::cout << "\t.-=: Домашнее Задание №8 :=-.\n"
@@ -159,6 +164,7 @@ int main()
 		
 	Automobile auto1;
 
+	// процесс срздания объекта
 	{
 
 		float input;
@@ -198,6 +204,7 @@ int main()
 
 	int menuAction = -1;
 
+	// главный цикл выполнения
 	while (menuAction != 0)
 	{
 		clrscr();
