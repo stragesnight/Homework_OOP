@@ -117,7 +117,7 @@ int main()
         building.removeApartament(rand() % 6);
 
     PAUSE_INFO;
-    
+
     std::cout << "Добавляем нового жителя во вторую по счету квартиру...\n";
     Apartament* apartament = (Apartament*)building.getApartament(1);
     apartament->addTenant(generateHuman());
