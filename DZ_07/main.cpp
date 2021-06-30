@@ -9,6 +9,7 @@
     методами для предметной области класса. Использовать динамические массивы.
 */
 
+#include <cstdio>
 #if defined(_WIN32) || defined(_WIN64)
     #include <Windows.h>
     #define handlelocale() SetConsoleCP(1251); SetConsoleOutputCP(1251)

@@ -27,3 +27,4 @@ include_directories(${SRC_DIR}/)
 add_executable(${PROJ_NAME} ${SRC_DIR}/main.cpp)
 
 target_link_libraries(${PROJ_NAME} PUBLIC ${LIB_LIST})
+
