@@ -25,9 +25,10 @@ enum Month { 	January = 1, February, March, April,
 							September, October, November, December };
 
 // количетсво дней в каждом месяце
-unsigned daysInMonths[] { 0, 31, 28, 31, 30,
-													31, 30, 31, 31,
-													30, 31, 30, 31	};
+// первый месяц служит пустышкой для правильной индексации
+unsigned daysInMonths[] { 1, 31, 28, 31, 30,
+									31, 30, 31, 31,
+									30, 31, 30, 31	};
 
 // Дата
 class Date
@@ -43,7 +44,7 @@ private:
 	{
 		// проверить на високосность
 		// - записть равноценна year % 4 == 0
-		isLeapYear = ((year & 0b100) == 0b100);
+		isLeapYear = !((year & 0b100) == 0b100);
 		// обновить количество дней в феврале
 		daysInMonths[February] = isLeapYear ? 29 : 28;
 	}
@@ -51,6 +52,9 @@ private:
 	// проверить дату на корректность
 	void validate()
 	{
+		if (month > 12)
+			month %= 12;
+	
 		if (day > daysInMonths[month])
 		{
 			day %= daysInMonths[month];
@@ -61,9 +65,8 @@ private:
 		{
 			month %= 12;
 			year++;
+			updateLeap();
 		}
-
-		updateLeap();
 	}
 
 public:
@@ -88,11 +91,8 @@ public:
 		// вычислить текущий месяц и день
 		month = 1;
 		day = daysIntoYear + 1;
-		while (true)
+		while (daysInMonths[month] < day)
 		{
-			if (daysInMonths[month] > day)
-				break;
-
 			day -= daysInMonths[month];
 			month++;
 		}
@@ -104,7 +104,7 @@ public:
 	Date(unsigned day, unsigned month, unsigned year)
 	{
 		this->year = year;
-		this->month = month % 12;
+		this->month = month;
 		this->day = day;
 
 		updateLeap();

@@ -1,12 +1,7 @@
-#scripts
-*.bat
 *.sh
-# build files
-*.exe
 *.out
-# archives
 *.rar
 *.zip
-
 Debug/*
+.cache/*
 compile_commands.json
