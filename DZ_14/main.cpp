@@ -1,7 +1,7 @@
 ﻿/*
 	-= Домашнее Задание №14 =-
 		Ученик - Шелест Александр
-		
+
 	Написать программу, обрабатывающую введённую пользователем строку.
 	- Признаком окончания строки есть ";".
 	- В ней могут присутствовать скобки различных видов.
@@ -19,7 +19,7 @@
 #if defined (_WIN32) or defined (_WIN64)
 # include <conio.h>
 # include <Windows.h>
-  HANDLE h = GetStdHandle(-11);		// STD_OUTPUT_HANDLE
+HANDLE h = GetStdHandle(-11);		// STD_OUTPUT_HANDLE
 # define log(msg) SetConsoleTextAttribute(h, 0x0e); std::cout << "# " << msg << '\n'; SetConsoleTextAttribute(h, 0x0F)
 # define logerr(msg) SetConsoleTextAttribute(h, 0x04); std::cout << "# " << msg << '\n'; SetConsoleTextAttribute(h, 0x0F)
 #elif defined (__linux__)
@@ -30,11 +30,11 @@
 // ключевые значения для различных типов допустимыс символов
 enum EXPR_SYMBOL
 {
-	OPEN_PAREN 		= 0x01000000,
-	CLOSED_PAREN 	= 0x02000000,
-	CONSTANT 			= 0x03000000,
-	OPERATION 		= 0x04000000,
-	INVALID 			= 0x0F000000
+	OPEN_PAREN = 0x01000000,
+	CLOSED_PAREN = 0x02000000,
+	CONSTANT = 0x03000000,
+	OPERATION = 0x04000000,
+	INVALID = 0x0F000000
 };
 
 // получить тип символа
@@ -51,20 +51,17 @@ enum EXPR_SYMBOL
 #define EXPR_CONST_TO_SYM(v) (EXPR_INT_VALUE(v) | CONSTANT)
 
 // список допустимых скобок
-const char open_parens[] { "({[<" };
-const char closed_parens[] { ")}]>" };
+const char open_parens[]{ "({[<" };
+const char closed_parens[]{ ")}]>" };
 // список допустимых операций
-const char operations[] { "+-*/" };
-
-int mode = 0;
-
+const char operations[]{ "+-*/" };
 
 // Стек
 template <class T>
 class Stack
 {
 private:
-	T* data; 					// непосредственно данные
+	T* data; 			// непосредственно данные
 	T* stackPointer; 	// указатель на вершину стека
 	unsigned size; 		// максимальный размер стека
 
@@ -143,7 +140,7 @@ bool isMatchingParen(char a, char b)
 		if (a == closed_parens[i] && b == open_parens[i])
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -161,14 +158,14 @@ EXPR_SYMBOL findSymbolType(char c)
 		if (c == open_parens[i])
 			return OPEN_PAREN;
 
-	for (int i = 0, size = strlen(open_parens); i < size; i++)
+	for (int i = 0, size = strlen(closed_parens); i < size; i++)
 		if (c == closed_parens[i])
 			return CLOSED_PAREN;
 
-	for (int i = 0, size = strlen(open_parens); i < size; i++)
+	for (int i = 0, size = strlen(operations); i < size; i++)
 		if (c == operations[i])
 			return OPERATION;
-			
+
 	if (c >= '0' && c <= '9')
 		return CONSTANT;
 
@@ -205,7 +202,7 @@ bool handleClosedParen(Stack<int>& stack, char*& expr)
 		int buff_const = sym;
 
 		skipWs(expr);
-		
+
 		sym = stack.pop();
 
 		if (isMatchingParen(EXPR_CHAR_VALUE(sym), thisPar))
@@ -254,6 +251,8 @@ bool handleConstant(Stack<int>& stack, char*& str)
 		str++;
 	}
 
+	str--;
+
 	stack.push(EXPR_CONST_TO_SYM(result));
 
 	return true;
@@ -283,21 +282,21 @@ bool handleOperation(Stack<int>& stack, char*& expr)
 
 	switch (op)
 	{
-		case '+':
-			stack.push(EXPR_CONST_TO_SYM(a + b));
-			break;
-		case '-':
-			stack.push(EXPR_CONST_TO_SYM(abs(a - b)));
-			break;
-		case '*':
-			stack.push(EXPR_CONST_TO_SYM(a * b));
-			break;
-		case '/':
-			stack.push(EXPR_CONST_TO_SYM(a / b));
-			break;
-		default:
-			logerr("неизвестный символ операции '" << op << "'.");
-			return false;
+	case '+':
+		stack.push(EXPR_CONST_TO_SYM(a + b));
+		break;
+	case '-':
+		stack.push(EXPR_CONST_TO_SYM(abs(a - b)));
+		break;
+	case '*':
+		stack.push(EXPR_CONST_TO_SYM(a * b));
+		break;
+	case '/':
+		stack.push(EXPR_CONST_TO_SYM(a / b));
+		break;
+	default:
+		logerr("неизвестный символ операции '" << op << "'.");
+		return false;
 	}
 
 	return true;
@@ -319,28 +318,13 @@ bool handleKeywords(char* expr)
 		log("Примеры:");
 		log("(2 1 +);                // = 2 + 1 = 3");
 		log("{(16 8 -) 6 *};         // = (16 - 8) * 6 = 8 * 6 = 48");
-		log("((((100 1 -) 2 -) 3 -); // = 100 - 1 - 2 - 3 = 94");
+		log("(((100 1 -) 2 -) 3 -);  // = 100 - 1 - 2 - 3 = 94");
 		log("({3 2 *} <7 2 -> *);    // = (3 * 2) * (7 - 2) = 6 * 5 = 30\n\n");
 
 		log("Доступные команды:");
 		log("\thelp - это сообщение");
 		log("\texit - выход из программы");
-		log("\tmode0 - включение обработки арифметики (по умолчанию)");
-		log("\tmode1 - выключение обработки арифметики. "
-				<<	"в этом режиме программа будет проверять только написание скобок.");
-		
-		return true;
-	}
-	else if (strcmp(expr, "mode0") == 0)
-	{
-		mode = 0;
-		log("режим обработки арифметики включён.");
-		return true;
-	}
-	else if (strcmp(expr, "mode1") == 0)
-	{
-		mode = 1;
-		log ("режим обработки арифметики отключён");
+
 		return true;
 	}
 	else if (strcmp(expr, "exit") == 0)
@@ -362,18 +346,25 @@ bool handleKeywords(char* expr)
 // - возвратить результат выражения
 bool evalExpression(char* expr, int* result = 0)
 {
-// проверить, успешно ли прошла обработка символа
+	// проверить, успешно ли прошла обработка символа
 # define assert_expr(b) if (!(b)) { *expr = '\0'; return false; }
 
 	// прекратить выполнение цикла, если было найдено ключевое слово
 	if (handleKeywords(expr))
 		return true;
 
+	if (strlen(expr) == 1)
+	{
+		logerr("недопустимая длина выражения.");
+		return false;
+	}
+
 	bool encountered_operation = false;
-	
+	bool encountered_unknown_symbol = false;
+
 	Stack<int> expr_stack(64);
 
-	while (*expr != '\0' && *expr != ';')
+ 	while (*(expr) != '\0' && *(expr) != ';')
 	{
 		skipWs(expr);
 		char c = *expr;
@@ -382,33 +373,30 @@ bool evalExpression(char* expr, int* result = 0)
 
 		switch (symbol_type)
 		{
-			case OPEN_PAREN:
-				assert_expr(handleOpenParen(expr_stack, c))
-				break;
-			case CLOSED_PAREN:
-				assert_expr(handleClosedParen(expr_stack, expr))
-				break;
-			case CONSTANT:
-				encountered_operation = true;
-				if (mode == 0)
-				{
-					assert_expr(handleConstant(expr_stack, expr))
-				}
-				break;
-			case OPERATION:
-				encountered_operation = true;
-				if (mode == 0)
-				{
-					assert_expr(handleOperation(expr_stack, expr))
-				}
-				break;
-			case INVALID:
-			default:
-				if (mode == 0)
-				{
-					logerr("неизвестный символ '" << c << "'.");
-				}
-				break;
+		case OPEN_PAREN:
+			assert_expr(handleOpenParen(expr_stack, c))
+			break;
+		case CLOSED_PAREN:
+			assert_expr(handleClosedParen(expr_stack, expr))
+			break;
+		case CONSTANT:
+			encountered_operation = true;
+			assert_expr(handleConstant(expr_stack, expr))
+			break;
+		case OPERATION:
+			encountered_operation = true;
+			assert_expr(handleOperation(expr_stack, expr))
+			break;
+		case INVALID:
+		default:
+			if (!encountered_unknown_symbol)
+			{
+				encountered_unknown_symbol = true;
+				expr_stack.push(EXPR_CONST_TO_SYM(0));
+			}
+
+			logerr("неизвестный символ '" << c << "'.");
+			break;
 		}
 
 		expr++;
@@ -417,12 +405,20 @@ bool evalExpression(char* expr, int* result = 0)
 	// проверить символ на корректность в зависимости от режима работы программы
 	*result = expr_stack.pop();
 
-	if (EXPR_SYM_TYPE(*result) != CONSTANT && encountered_operation)
+	if ((EXPR_SYM_TYPE(*result) != CONSTANT) || !expr_stack.isEmpty())
 	{
-		logerr("нечётное количество открывающихся и закрывающихся скобок.");
-		return false;
+		if (encountered_operation)
+		{
+			logerr("нечётное количество открывающихся и закрывающихся скобок.");
+			return false;
+		}
+		else
+		{
+			logerr("Выражение, состоящее только из скобок - недопустимо.");
+			return false;
+		}
 	}
-	
+
 	*result = EXPR_INT_VALUE(*result);
 	return true;
 }
@@ -441,29 +437,22 @@ int main()
 	while (true)
 	{
 		// получить строку от пользователя
- 		char buff[512]{};
+		char buff[512]{};
 		std::cout << "\n> ";
 		std::cin.getline(buff, 512);
 		std::cout << '\n';
 
 		// вызвать обработку выражения в строке
 		int result = 0;
-		bool valid = evalExpression(buff, &result); 
+		bool valid = evalExpression(buff, &result);
 
 		// вывести результат на экран
 		if (valid)
 		{
-			if (mode == 1)
-			{
-				log("Выражение синтаксически правильно.");
-			}
-			else
-			{
-				log("результат выражения - " << result);
-			}
+			log("результат выражения - " << result);
 		}
 		else
-		{ 
+		{
 			logerr(buff << " <- ошибка возникла в этой части выражения.");
 		}
 	}
