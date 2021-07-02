@@ -34,7 +34,7 @@ enum EXPR_SYMBOL
 	CLOSED_PAREN 	= 0x02000000,
 	CONSTANT 			= 0x03000000,
 	OPERATION 		= 0x04000000,
-	INVALID 			= 0xFF000000
+	INVALID 			= 0x0F000000
 };
 
 // получить тип символа
@@ -43,7 +43,7 @@ enum EXPR_SYMBOL
 // получить значение символа
 
 #define EXPR_CHAR_VALUE(v) char(v & 0xFF)
-#define EXPR_INT_VALUE(v) int(v & 0xFFFFFF)
+#define EXPR_INT_VALUE(v) int(v & 0x00FFFFFF)
 
 // преобразовать значение в символ
 
@@ -287,7 +287,7 @@ bool handleOperation(Stack<int>& stack, char*& expr)
 			stack.push(EXPR_CONST_TO_SYM(a + b));
 			break;
 		case '-':
-			stack.push(EXPR_CONST_TO_SYM(a - b));
+			stack.push(EXPR_CONST_TO_SYM(abs(a - b)));
 			break;
 		case '*':
 			stack.push(EXPR_CONST_TO_SYM(a * b));
