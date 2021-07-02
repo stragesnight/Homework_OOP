@@ -3,5 +3,5 @@
 *.rar
 *.zip
 Debug/*
-.cache/*
+*/.cache/*
 compile_commands.json
