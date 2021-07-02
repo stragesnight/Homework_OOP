@@ -20,8 +20,8 @@
 # include <conio.h>
 # include <Windows.h>
   HANDLE h = GetStdHandle(-11);		// STD_OUTPUT_HANDLE
-# define log(msg) SetConsoleTextAttribute(h, 0x08); std::cout << "# " << msg << "\n\n"; SetConsoleTextAttribute(h, 0x0F)
-# define logerr(msg) SetConsoleTextAttribute(h, 0x04); std::cout << "# " << msg << "\n\n"; SetConsoleTextAttribute(h, 0x0F)
+# define log(msg) SetConsoleTextAttribute(h, 0x0e); std::cout << "# " << msg << '\n'; SetConsoleTextAttribute(h, 0x0F)
+# define logerr(msg) SetConsoleTextAttribute(h, 0x04); std::cout << "# " << msg << '\n'; SetConsoleTextAttribute(h, 0x0F)
 #elif defined (__linux__)
 # define log(msg) std::cout << "\e[3;37m# " << msg << "\e[0m\n"
 # define logerr(msg) std::cout << "\e[1;31m# ОШИБКА: " << msg << "\e[0m\n"
@@ -261,7 +261,7 @@ bool handleConstant(Stack<int>& stack, char*& str)
 
 // операция:
 // - удалить два элемента со стека и сохранить их в переменные
-// - проверить \ти два элемента на корректность
+// - проверить эти два элемента на корректность
 // - извлечь числовые значения из полученных символов
 // - провести указанную арифметическую операцию над операндами
 // - добавить результат в стек
@@ -391,17 +391,23 @@ bool evalExpression(char* expr, int* result = 0)
 			case CONSTANT:
 				encountered_operation = true;
 				if (mode == 0)
+				{
 					assert_expr(handleConstant(expr_stack, expr))
+				}
 				break;
 			case OPERATION:
 				encountered_operation = true;
 				if (mode == 0)
+				{
 					assert_expr(handleOperation(expr_stack, expr))
+				}
 				break;
 			case INVALID:
 			default:
 				if (mode == 0)
+				{
 					logerr("неизвестный символ '" << c << "'.");
+				}
 				break;
 		}
 
@@ -448,12 +454,18 @@ int main()
 		if (valid)
 		{
 			if (mode == 1)
+			{
 				log("Выражение синтаксически правильно.");
+			}
 			else
+			{
 				log("результат выражения - " << result);
+			}
 		}
 		else
+		{ 
 			logerr(buff << " <- ошибка возникла в этой части выражения.");
+		}
 	}
 
 	// завершение программы
