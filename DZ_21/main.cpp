@@ -1,14 +1,14 @@
 ﻿/*
-	Домащнее Задание №20
+	Домащнее Задание №21
 		Ученик: Шелест Александр
 
-	Написать пример программы с использованием
-	абстрактного класса и виртуального деструктора
-	
-	Эта программа вычисляет результат введённого выражения,
-	описываемого вызовом функции с параметрами.
+	Написать пример программы с использованием блока try-catch
+	и ключевого слова throw.
+	В этой программе обработка исключений происходит в функции main()
+	при попытке вычислить значение выражения.
 */
 
+#include <exception>
 #include <iostream>  // std::cout; std::cin;
 #include <clocale>   // setlocale()
 #include <cstring>   // std::string
@@ -17,7 +17,55 @@
 
 // макросы для логов
 #define log(msg) std::cout << "# " << msg << '\n'
-#define logerr(msg) std::cout << "# ERROR: " << msg << '\n'
+#define logerr(msg) std::cout << "# CAUGHT EXCEPTION: " << msg << '\n'
+
+
+// Собственный класс исключения
+class NodeException : public std::exception
+{
+private:
+	// сообщение исключения
+	char* msg;
+
+public:
+	// конструктор с параметром
+	NodeException(const char* msg)
+	{
+		size_t len = strlen(msg);
+		this->msg = new char[len + 1];
+		
+		for (size_t i = 0; i < len; i++)
+			this->msg[i] = msg[i];
+
+		this->msg[len] = '\0';
+	}	
+
+	// конструктор с параметром
+	NodeException(std::string str)
+	{
+		const char* msg = str.c_str();
+		size_t len = strlen(msg);
+		this->msg = new char[len + 1];
+		
+		for (size_t i = 0; i < len; i++)
+			this->msg[i] = msg[i];
+
+		this->msg[len] = '\0';
+	}
+
+	// деструктор
+	~NodeException()
+	{
+		delete[] msg;
+	}
+
+	// получить текст исключения
+	const char* what()
+	{
+		return msg;
+	}
+};
+
 
 // объявление базового класса
 class Node;
@@ -231,10 +279,9 @@ private:
 		for (size_t n = 0; n < nArgs; n++)
 		{
 			if (!readWord(rest, buff, i))
-			{
-				logerr("not enough arguments for symbol \"" << node->getName() << "\"");
-				return -1;
-			}
+				throw NodeException(
+					std::string("not enough arguments for symbol \"").append(node->getName()).append("\"")
+				);
 
 			WORD_TYPE word_type = getWordType(buff);
 
@@ -250,18 +297,17 @@ private:
 				Node* next_node = expressions[buff];
 
 				if (next_node == nullptr)
-				{
-					logerr("unable to find symbol \"" << buff << "\" in list");
-					return -1;
-				}
+					throw NodeException(
+						std::string("symbol \"").append(buff).append("\" is undefined")
+					);
 
 				args.push_back(new NumericNode("arg", evalNode(next_node, rest, i)));
 				break;
 			}
 			case WORD_TYPE::UNRECOGNIZED:
 			default:
-				logerr("unexpected symbol \"" << buff << '\"');
-				return -1;
+				throw NodeException(std::string("unexpected symbol \"").append(buff).append("\""));
+				break;
 			}
 
 			memset(buff, 0, 64);
@@ -315,10 +361,7 @@ public:
 			Node* node = expressions[buff];
 
 			if (node == nullptr)
-			{
-				logerr("symbol \"" << buff << "\" is undefined");
-				return -1;
-			}
+				throw NodeException(std::string("symbol \"").append(buff).append("\" is undefined"));
 
 			result = evalNode(node, expr, i);
 			break;
@@ -331,10 +374,9 @@ public:
 			void(*directive)(const char*) = directives[buff];
 
 			if (directive == nullptr)
-			{
-				logerr("directive \"" << buff << "\" is undefined");
-				return -1;
-			}
+				throw NodeException(
+					std::string("directive \"").append(buff).append("\" is undefined").c_str()
+				);
 
 			directive(expr + i);
 
@@ -343,16 +385,17 @@ public:
 		case WORD_TYPE::UNRECOGNIZED:
 		default:
 		{
-			logerr("unexpected symbol \"" << buff << "\"");
-			return -1;
+			throw NodeException(std::string("unexpected symbol \"").append(buff).append("\""));
+			break;
 		}
 		}
 
 		memset(buff, 0, 64);
 		if (readWord(expr, buff, i))
 		{
-			logerr("unexpected symbol \"" << buff << "\" after finished expression");
-			logerr("unexpected tail symbol would be ignored");
+			throw NodeException(
+				std::string("unexpected symbol \"").append(buff).append("\" after finished expression")
+			);
 		}
 
 		return result;
@@ -388,14 +431,14 @@ void d_help(const char* str)
 #define pause() \
 		std::cout << "Нажмите Enter для продолжения...\n";	\
 		std::cin.get(); 
-	log("\tДомашнее Задание № 20");
+	log("\tДомашнее Задание № 21");
 	log("\t\tУченик: Шелест Алексадр");
 	log("");
-	log("Написать пример программы с использованием");
-	log("Абстрактного класса и виртуального деструктора.");
+	log("Написать пример программы с использованием блока try-catch");
+	log("и ключевого слова throw.");
+	log("В этой программе обработка исключений происходит в функции main()");
+	log("при попытке вычислить значение выражения.");
 	pause();
-	log("----------------------------------------------");
-	log("!!!Диаграмма классов для этой программы находится в архиве!!!");
 	log("----------------------------------------------");
 	log("Эта программа вычисляет результат введённого выражения");
 	log("описываемого вызовом функции с её параметрами.");
@@ -426,7 +469,6 @@ void d_help(const char* str)
 	pause();
 	log("----------------------------------------------");
 	log("Примеры выражений:");
-	log("Все эти примеры также доступны в файле в архиве");
 	log("Пример 1 - простой вызов функции");
 	log("> div 12 3");
 	log("Пример 2 - вызов функции с вложенными вызовами");
@@ -485,6 +527,11 @@ long e_even(std::vector<Node*>* args)
 // проверка на нечётность
 long e_odd(std::vector<Node*>* args)
 {
+	if (args->size() != 1)
+		throw NodeException(
+			"unexpected number of arguments for function \"odd\", expected 1"
+		);
+
 	return (args->at(0)->evaluate(nullptr) & 1) == 1;
 }
 
@@ -522,8 +569,22 @@ int main()
 		std::cin.getline(input, 512);
 
 		MacroNode expression("expr", input);
-		long result = expression.evaluate(nullptr);
-		log("result: " << result);
+
+		/////////////////////////////////////////////////////////////////////////////
+		// ОБРАБОТКА ИСКЛЮЧЕНИЙ
+
+		// попытаться вычислить значение выражения в блоке try
+		try
+		{
+			long result = expression.evaluate(nullptr);
+			log("result: " << result);
+		}
+		// если было поймано исключение...
+		catch (NodeException& ex)
+		{
+			// вывести текст исключения на экран
+			logerr(ex.what());
+		}
 	}
 
 	// завершение программы
