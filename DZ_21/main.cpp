@@ -527,11 +527,6 @@ long e_even(std::vector<Node*>* args)
 // проверка на нечётность
 long e_odd(std::vector<Node*>* args)
 {
-	if (args->size() != 1)
-		throw NodeException(
-			"unexpected number of arguments for function \"odd\", expected 1"
-		);
-
 	return (args->at(0)->evaluate(nullptr) & 1) == 1;
 }
 
