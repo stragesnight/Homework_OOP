@@ -109,7 +109,12 @@ public:
 	std::string what() const override
 	{
 		char buff[1024];
-		sprintf(buff, "%s на адресе памяти %p", msg.c_str(), loc);
+// компилятор Visual Studio жалуется на sprintf
+# 		if defined (_WIN32) or defined (_WIN64)
+			sprintf_s(buff, "%s на адресе памяти %p", msg.c_str(), loc);
+# 		else
+			sprintf(buff, "%s на адресе памяти %p", msg.c_str(), loc);
+# 		endif
 		return std::string(buff);
 	}
 };
@@ -206,6 +211,10 @@ int main()
 		int res = a / b;
 		std::cout << "64 / 0 = " << res;
 	}
+	// так как ArithmeticException наследуется от Expression,
+	// сработает первый блок catch.
+	// Но в силу того, что метод what() - виртуальный,
+	// результат не изменится.
 	catch (const Exception& ex)
 	{
 		std::cout << "ПОЙМАНО ИСКЛЮЧЕНИЕ: "<< ex.what()
