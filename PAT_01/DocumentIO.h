@@ -2,6 +2,7 @@
 
 #include "Document.h"
 
+
 // disk input/output manager
 // responsible for all communications with disk storage
 class DiskIOManager
@@ -9,13 +10,15 @@ class DiskIOManager
 private:
 	static DiskIOManager* instance;
 
+	void appendToBuffer(char*& dst, const char* src);
+
 public:
 	DiskIOManager();
 	
 	static DiskIOManager* getInstance();
 
-	int saveDocument(DocumentFileSpec* fileSpec);
-	Document openDocument(const char* filepath);
+	int saveDocument(const char* filepath, DocumentFileSpec* fileSpec);
+	Document* openDocument(const char* filepath, DocumentFileSpec* fileSpec);
 };
 
 
@@ -33,5 +36,4 @@ public:
 
 	int print(DocumentRenderer* renderer);
 };
-
 

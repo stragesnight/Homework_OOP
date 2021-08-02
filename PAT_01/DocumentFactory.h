@@ -14,8 +14,10 @@ public:
 	~DocumentFactory();
 
 	Document* createDocument(const char* name);
+	Document* openDocument(const char* name);
+
 	Document* getDocument(const char* name);
 	
-	void closeDocument(const char* name);
+	int closeDocument(const char* name);
 };
 

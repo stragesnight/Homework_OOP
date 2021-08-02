@@ -11,8 +11,11 @@ protected:
 
 public:
 	DocumentFileSpec(Document* parent);
+	virtual ~DocumentFileSpec();
 	// transform parent document int raw binary data
 	virtual unsigned getSaveData(void* buffer) = 0;
+	// transform raw binary data into document
+	virtual Document* parseData(void* buffer, unsigned size) = 0;
 };
 
 
@@ -25,6 +28,7 @@ protected:
 
 public:
 	DocumentRenderer(Document* parent);
+	virtual ~DocumentRenderer();
 	// draw parent document on screen
 	virtual int draw() = 0;
 };
@@ -37,8 +41,9 @@ protected:
 	Document* parent;
 public:
 	DocumentEditor(Document* parent);
+	virtual ~DocumentEditor();
 	// edit contents of parent document depending on recieved input
-	virtual int editDocument() = 0;
+	virtual int editDocument(char input) = 0;
 	//virtual int editDocument(const EditData& editData) = 0;
 };
 
@@ -56,8 +61,8 @@ public:
 	Document(const char* name);
 	~Document();
 
-	DocumentFileSpec* getFileSpec();
-	DocumentRenderer* getRenderer();
-	DocumentEditor* getEditor();
+	DocumentFileSpec* getFileSpec() const;
+	DocumentRenderer* getRenderer() const;
+	DocumentEditor* getEditor() const;
 };
 

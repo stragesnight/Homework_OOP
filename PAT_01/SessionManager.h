@@ -9,13 +9,13 @@
 // and managing logic
 class SessionManager
 {
-private:
+protected:
 	static SessionManager* instance;
 	DocumentFactory* documentFactory;
 	Document* selectedDocument;
 	
 	// update loop, called every frame
-	int update();
+	virtual int update();
 	// close all documents and stop program
 	int exitSession();
 
@@ -27,6 +27,6 @@ public:
 	Document* getSelectedDocument();
 
 	// start session update loop
-	int startSession();
+	virtual int startSession();
 };
 

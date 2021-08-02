@@ -8,6 +8,7 @@ class UserInputManager
 {
 private:
 	static UserInputManager* instance;
+	char lastObtainedInput;
 
 public:
 	UserInputManager();
@@ -15,6 +16,9 @@ public:
 	static UserInputManager* getInstance();
 
 	// handle user input
-	int onInput();
+	int recieveInput();
+
+	// get last obtained user input
+	char lastInput();
 };
 

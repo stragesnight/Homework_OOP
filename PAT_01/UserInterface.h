@@ -6,14 +6,15 @@
 // class responsible for visual representation of the program
 class UserInterface
 {
-private:
+protected:
 	static UserInterface* instance;
 
 public:
 	UserInterface();
+	virtual ~UserInterface();
 
 	static UserInterface* getInstance();
 
-	int draw();
+	virtual int draw() = 0;
 };
 
