@@ -78,9 +78,7 @@ namespace math_operations
 
 			void setDenominator(int denominator) 
 			{
-				if (denominator == 0)
-					throw "denominator of a fraction number cannot be zero";
-				this->denominator = denominator;
+				this->denominator = denominator + (denominator == 0);
 			}
 
 			explicit operator float() { return (float)numerator / (float)denominator; }
