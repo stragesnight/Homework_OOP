@@ -25,17 +25,17 @@ Document::~Document()
 	delete editor;
 }
 
-DocumentFileSpec* Document::getFileSpec() const
+DocumentFileSpec* Document::getFileSpec() 
 {
 	return fileSpec;
 }
 
-DocumentRenderer* Document::getRenderer() const
+DocumentRenderer* Document::getRenderer() 
 {
 	return renderer;
 }
 
-DocumentEditor* Document::getEditor() const
+DocumentEditor* Document::getEditor() 
 {
 	return editor;
 }

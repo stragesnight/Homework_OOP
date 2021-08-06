@@ -7,7 +7,7 @@
 class DocumentFactory
 {
 private:
-	Document* openDocuments;
+	Document** openDocuments;
 
 public:
 	DocumentFactory();

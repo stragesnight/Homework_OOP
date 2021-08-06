@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(${PROJ_NAME})
 
 # add files to project
-file(GLOB SOURCE_FILES ${SRC_DIR}/*.cpp)
 file(GLOB HEADER_FILES ${SRC_DIR}/*.h)
+file(GLOB SOURCE_FILES ${SRC_DIR}/*.cpp)
 
 foreach(srcfile ${SOURCE_FILES})
     get_filename_component(filename ${srcfile} NAME_WE)

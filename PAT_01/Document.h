@@ -61,8 +61,8 @@ public:
 	Document(const char* name);
 	~Document();
 
-	DocumentFileSpec* getFileSpec() const;
-	DocumentRenderer* getRenderer() const;
-	DocumentEditor* getEditor() const;
+	DocumentFileSpec* getFileSpec();
+	DocumentRenderer* getRenderer();
+	DocumentEditor* getEditor();
 };
 

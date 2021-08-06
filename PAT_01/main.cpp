@@ -15,6 +15,8 @@
 #include "UserInterface.h"
 #include "UserInputManager.h"
 
+#include <stdio.h>
+
 int main()
 {
 	// create singleton instances
@@ -22,9 +24,12 @@ int main()
 	SessionManager sm;
 	DiskIOManager diom;
 	PrinterIOManager piom;
-	UserInterface ui;
+	//UserInterface ui;
 	UserInputManager uim;
 
+	printf("getchar: %c", getchar());
+	printf("getc(stdin): %c", getc(stdin));
+	
 	// start editor session
 	return SessionManager::getInstance()->startSession();
 }

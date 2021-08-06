@@ -1,6 +1,8 @@
 #include "UserInputManager.h"
 #include <stdio.h>
 
+UserInputManager* UserInputManager::instance = nullptr;
+
 UserInputManager::UserInputManager()
 {
 	if (instance == nullptr)
@@ -16,6 +18,7 @@ UserInputManager* UserInputManager::getInstance()
 int UserInputManager::recieveInput()
 {
 	lastObtainedInput = getchar();
+	getc(stdin);
 	return 0;
 }
 

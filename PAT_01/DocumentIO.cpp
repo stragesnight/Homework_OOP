@@ -5,6 +5,8 @@
 #include <string.h>
 
 
+DiskIOManager* DiskIOManager::instance = nullptr;
+
 DiskIOManager::DiskIOManager()
 {
 	if (instance == nullptr)
@@ -66,6 +68,8 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	return fileSpec->parseData(buffer, streamsize);
 }
 
+
+PrinterIOManager* PrinterIOManager::instance = nullptr;
 
 PrinterIOManager::PrinterIOManager()
 {

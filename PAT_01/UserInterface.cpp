@@ -1,5 +1,6 @@
 #include "UserInterface.h"
 
+UserInterface* UserInterface::instance = nullptr;
 
 UserInterface::UserInterface()
 {

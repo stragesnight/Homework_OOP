@@ -3,6 +3,8 @@
 #include "UserInterface.h"
 
 
+SessionManager* SessionManager::instance = nullptr;
+
 SessionManager::SessionManager()
 {
 	if (instance != nullptr)
@@ -11,13 +13,13 @@ SessionManager::SessionManager()
 	instance = this;
 
 	documentFactory = new DocumentFactory();
-	selectedDocument = nullptr;
+	selectedDocument = documentFactory->getDocument("new");
 }
 
 SessionManager::~SessionManager()
 {
-	instance = nullptr;
 	delete documentFactory;
+	instance = nullptr;
 }
 
 int SessionManager::update()
@@ -29,11 +31,6 @@ int SessionManager::update()
 	UserInterface::getInstance()->draw();
 	selectedDocument->getRenderer()->draw();
 
-	return 0;
-}
-
-int SessionManager::exitSession()
-{
 	return 0;
 }
 
@@ -49,11 +46,11 @@ Document* SessionManager::getSelectedDocument()
 
 int SessionManager::startSession()
 {
-	// do initialization stuff...
+	int exitcode = 0;
 	
 	while (true)
 		update();
 
-	return exitSession();
+	return exitcode;
 }
 

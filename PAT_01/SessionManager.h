@@ -16,8 +16,6 @@ protected:
 	
 	// update loop, called every frame
 	virtual int update();
-	// close all documents and stop program
-	int exitSession();
 
 public:
 	SessionManager();

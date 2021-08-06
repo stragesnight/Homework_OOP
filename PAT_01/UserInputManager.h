@@ -18,7 +18,7 @@ public:
 	// handle user input
 	int recieveInput();
 
-	// get last obtained user input
+	// get last recieved user input
 	char lastInput();
 };
 
