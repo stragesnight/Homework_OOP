@@ -22,6 +22,7 @@ foreach(srcfile ${SOURCE_FILES})
     endif()
 endforeach(srcfile ${SOURCE_FILES})
 
+list(REVERSE LIB_LIST)
 include_directories(${SRC_DIR}/)
 
 add_executable(${PROJ_NAME} ${SRC_DIR}/main.cpp)

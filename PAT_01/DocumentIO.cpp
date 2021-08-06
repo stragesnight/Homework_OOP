@@ -65,7 +65,7 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	}
 
 	ifstr.close();
-	return fileSpec->parseData(buffer, streamsize);
+	return fileSpec->parseData(buffer);
 }
 
 

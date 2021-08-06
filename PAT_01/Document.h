@@ -8,14 +8,13 @@ class DocumentFileSpec
 {
 protected:
 	Document* parent;
-
 public:
-	DocumentFileSpec(Document* parent);
-	virtual ~DocumentFileSpec();
+	DocumentFileSpec(Document* parent) { this->parent = parent; }
+	virtual ~DocumentFileSpec() {}
 	// transform parent document int raw binary data
-	virtual unsigned getSaveData(void* buffer) = 0;
+	virtual unsigned getSaveData(char*& buffer) = 0;
 	// transform raw binary data into document
-	virtual Document* parseData(void* buffer, unsigned size) = 0;
+	virtual Document* parseData(const char* buffer) = 0;
 };
 
 
@@ -24,11 +23,9 @@ class DocumentRenderer
 {
 protected:
 	Document* parent;
-	//RenderingContext context;
-
 public:
-	DocumentRenderer(Document* parent);
-	virtual ~DocumentRenderer();
+	DocumentRenderer(Document* parent) { this->parent = parent; }
+	virtual ~DocumentRenderer() {}
 	// draw parent document on screen
 	virtual int draw() = 0;
 };
@@ -40,8 +37,8 @@ class DocumentEditor
 protected:
 	Document* parent;
 public:
-	DocumentEditor(Document* parent);
-	virtual ~DocumentEditor();
+	DocumentEditor(Document* parent) { this->parent = parent; }
+	virtual ~DocumentEditor() {}
 	// edit contents of parent document depending on recieved input
 	virtual int editDocument(char input) = 0;
 	//virtual int editDocument(const EditData& editData) = 0;

@@ -2,6 +2,8 @@
 #include "UserInputManager.h"
 #include "UserInterface.h"
 
+#include "TextDocument/TextDocument.h"
+
 
 SessionManager* SessionManager::instance = nullptr;
 
@@ -13,7 +15,8 @@ SessionManager::SessionManager()
 	instance = this;
 
 	documentFactory = new DocumentFactory();
-	selectedDocument = documentFactory->getDocument("new");
+	//selectedDocument = documentFactory->getDocument("new");
+	selectedDocument = new TextDocument("jopix");
 }
 
 SessionManager::~SessionManager()
