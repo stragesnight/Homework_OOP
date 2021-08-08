@@ -1,8 +1,4 @@
-#include "SessionManager.h"
-#include "UserInputManager.h"
-#include "UserInterface.h"
-
-#include "TextDocument/TextDocument.h"
+﻿#include "SessionManager.h"
 
 
 SessionManager* SessionManager::instance = nullptr;
@@ -15,26 +11,13 @@ SessionManager::SessionManager()
 	instance = this;
 
 	documentFactory = new DocumentFactory();
-	//selectedDocument = documentFactory->getDocument("new");
-	selectedDocument = new TextDocument("jopix");
+	selectedDocument = nullptr;
 }
 
 SessionManager::~SessionManager()
 {
 	delete documentFactory;
 	instance = nullptr;
-}
-
-int SessionManager::update()
-{
-	UserInputManager::getInstance()->recieveInput();
-	char userInput = UserInputManager::getInstance()->lastInput();
-	selectedDocument->getEditor()->editDocument(userInput);
-
-	UserInterface::getInstance()->draw();
-	selectedDocument->getRenderer()->draw();
-
-	return 0;
 }
 
 SessionManager* SessionManager::getInstance()
@@ -45,15 +28,5 @@ SessionManager* SessionManager::getInstance()
 Document* SessionManager::getSelectedDocument()
 {
 	return selectedDocument;
-}
-
-int SessionManager::startSession()
-{
-	int exitcode = 0;
-	
-	while (true)
-		update();
-
-	return exitcode;
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Document.h"
 #include "DocumentFactory.h"
@@ -13,18 +13,19 @@ protected:
 	static SessionManager* instance;
 	DocumentFactory* documentFactory;
 	Document* selectedDocument;
-	
+
 	// update loop, called every frame
-	virtual int update();
+	virtual int update() = 0;
+	virtual int processInput(char input) = 0;
 
 public:
 	SessionManager();
-	~SessionManager();
+	virtual ~SessionManager();
 
 	static SessionManager* getInstance();
 	Document* getSelectedDocument();
 
 	// start session update loop
-	virtual int startSession();
+	virtual int startSession() = 0;
 };
 

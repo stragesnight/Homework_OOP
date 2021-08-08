@@ -1,34 +1,71 @@
-#include "DocumentFactory.h"
+﻿#include "DocumentFactory.h"
+#include "DocumentIO.h"
+#include <string.h>
 
 DocumentFactory::DocumentFactory()
 {
-	openDocuments = new Document*[1] {
-		new Document("new")
-	};
+	openDocuments = nullptr;
+	nDocs = 0;
 }
 
 DocumentFactory::~DocumentFactory()
 {
+	for (unsigned i = 0; i < nDocs; i++)
+		delete openDocuments[i];
 	delete[] openDocuments;
 }
 
-Document* DocumentFactory::createDocument(const char* name)
+void DocumentFactory::addDocument(Document* toAdd)
 {
-	return nullptr;
+	nDocs++;
+	Document** newArr = new Document*[nDocs]{};
+
+	for (unsigned i = 0; i < nDocs - 1; i++)
+		newArr[i] = openDocuments[i];
+	newArr[nDocs] = toAdd;
+
+	if (openDocuments != nullptr)
+		delete[] openDocuments;
+
+	openDocuments = newArr;
 }
 
-Document* DocumentFactory::openDocument(const char* name)
+template <class T> T* DocumentFactory::createDocument(const char* name)
 {
-	return nullptr;
+	try
+	{
+		T* res = new T(name);
+		addDocument(res);
+		return res;
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
 }
 
-Document* DocumentFactory::getDocument(const char* name)
+template <class T> T* DocumentFactory::getDocument(const char* name)
 {
+	for (unsigned i = 0; i < nDocs; i++)
+	{
+		if (strcmp(openDocuments[i]->getName(), name) == 0)
+			return openDocuments[i];
+	}
+
 	return nullptr;
 }
 
 int DocumentFactory::closeDocument(const char* name)
 {
-	return 0;
+	for (unsigned i = 0; i < nDocs; i++)
+	{
+		if (strcmp(openDocuments[i]->getName(), name) == 0)
+		{
+			delete openDocuments[i];
+			nDocs--;
+			return 0;
+		}
+	}
+	return 1;
 }
 

@@ -1,4 +1,4 @@
-#include "UserInterface.h"
+﻿#include "UserInterface.h"
 
 UserInterface* UserInterface::instance = nullptr;
 

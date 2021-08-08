@@ -1,4 +1,4 @@
-#include "TextDocumentInterfaces.h"
+﻿#include "TextDocumentInterfaces.h"
 
 
 void TextDocumentFileSpec::appendToBuffer(char*& dst, const char* src)

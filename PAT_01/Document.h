@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class Document;
 
@@ -58,6 +58,7 @@ public:
 	Document(const char* name);
 	~Document();
 
+	const char* getName();
 	DocumentFileSpec* getFileSpec();
 	DocumentRenderer* getRenderer();
 	DocumentEditor* getEditor();

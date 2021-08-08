@@ -1,4 +1,4 @@
-#include "TextDocument.h"
+﻿#include "TextDocument.h"
 
 
 TextDocument::TextDocument(const char* name)

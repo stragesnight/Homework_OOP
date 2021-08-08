@@ -1,4 +1,4 @@
-#include "UserInputManager.h"
+﻿#include "UserInputManager.h"
 #include <stdio.h>
 
 UserInputManager* UserInputManager::instance = nullptr;

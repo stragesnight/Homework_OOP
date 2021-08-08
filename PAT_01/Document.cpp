@@ -1,4 +1,4 @@
-#include "Document.h"
+﻿#include "Document.h"
 
 #include <string.h>
 
@@ -23,6 +23,11 @@ Document::~Document()
 	delete fileSpec;
 	delete renderer;
 	delete editor;
+}
+
+const char* Document::getName()
+{
+	return name;
 }
 
 DocumentFileSpec* Document::getFileSpec() 

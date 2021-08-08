@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "TextDocument.h"
 #include <iostream>
