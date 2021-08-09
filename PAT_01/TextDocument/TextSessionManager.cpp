@@ -1,18 +1,17 @@
 ﻿#include "TextSessionManager.h"
 
+#include "TextDocument.h"
 #include "../UserInputManager.h"
 #include "../UserInterface.h"
 
+#include <stdio.h>
+
 
 TextSessionManager::TextSessionManager() : SessionManager()
-{
-
-}
+{}
 
 TextSessionManager::~TextSessionManager()
-{
-	SessionManager::~SessionManager();
-}
+{}
 
 int TextSessionManager::update()
 {
@@ -24,7 +23,12 @@ int TextSessionManager::update()
 	UserInputManager::getInstance()->recieveInput();
 	char userInput = UserInputManager::getInstance()->lastInput();
 
-	if (processInput(userInput) == 0)
+	success = processInput(userInput);
+
+	if (success == 0xFFFF)
+		return 0xFFFF;
+
+	if (success != 0)
 	{
 		if (selectedDocument != nullptr)
 			update_assert(selectedDocument->getEditor()->editDocument(userInput));
@@ -42,16 +46,21 @@ int TextSessionManager::processInput(char input)
 {
 	switch (input)
 	{
+	case '|':
+		return 0xFFFF;
 	default:
-		return 1;
+		printf("unhandled session input \"%c\"\n", input);
+		return 0;
 	}
 
-	return 0;
+	return 1;
 }
 
 int TextSessionManager::startSession()
 {
 	int exitcode = 0;
+
+	selectedDocument = new TextDocument("new");
 	
 	while (exitcode == 0)
 		exitcode = update();

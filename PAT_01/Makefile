@@ -10,18 +10,19 @@ _SOURCES = Document.cpp \
 		   UserInterface.cpp \
 		   TextDocument/TextDocument.cpp \
 		   TextDocument/TextDocumentInterfaces.cpp \
+		   TextDocument/TextSessionManager.cpp \
+		   TextDocument/TextUserInterface.cpp \
 		   SessionManager.cpp
 SOURCES = $(patsubst %,$(SRC_DIR)/%,$(_SOURCES))
 
 OBJECTS = $(SOURCES:%.cpp=%.o)
-
-#LIBS = -lm
 
 
 all: build clean
 
 build: $(OBJECTS)
 	$(CC) ${SRC_DIR}/main.cpp $(CXXFLAGS) $(OBJECTS)
+	@echo "Build successfull."
 
 %.o: %.cpp
 	$(CC) -c $< -o $@ $(CXXFLAGS)

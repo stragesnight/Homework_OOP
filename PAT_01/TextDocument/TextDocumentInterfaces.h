@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 #include "TextDocument.h"
-#include <iostream>
-#include <string.h>
 
 
 class TextDocumentFileSpec : public DocumentFileSpec

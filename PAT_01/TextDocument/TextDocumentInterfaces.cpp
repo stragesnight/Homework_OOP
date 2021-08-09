@@ -1,5 +1,9 @@
 ﻿#include "TextDocumentInterfaces.h"
 
+#include "TextUserInterface.h"
+#include <string.h>
+#include <stdio.h>
+
 
 void TextDocumentFileSpec::appendToBuffer(char*& dst, const char* src)
 {
@@ -50,7 +54,7 @@ Document* TextDocumentFileSpec::parseData(const char* buffer)
 {
 	if (!isValid(buffer))
 	{
-		std::cout << "INVALID FLIE TYPE!\n";
+		printf("INVALID FILE TYPE!\n");
 		return nullptr;
 	}
 
@@ -62,7 +66,10 @@ Document* TextDocumentFileSpec::parseData(const char* buffer)
 
 int TextDocumentRenderer::draw()
 {
-	std::cout << ((TextDocument*)parent)->getBuffer();
+	const char* buff = ((TextDocument*)parent)->getBuffer();
+	TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
+	tui->drawText({0, 0}, buff, {0, 0}, 5);
+
 	return 0;
 }
 
@@ -72,7 +79,7 @@ int TextDocumentEditor::editDocument(char input)
 	switch (input)
 	{
 	default:
-		std::cout << "unimplemented input callback \"" << input << "\"\n";
+		printf("unimplemented input callback \"%c\"", input);
 	}
 
 	return 0;

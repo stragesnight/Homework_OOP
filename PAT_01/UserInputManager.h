@@ -8,10 +8,11 @@ class UserInputManager
 {
 private:
 	static UserInputManager* instance;
-	char lastObtainedInput;
+	char lastRecievedInput;
 
 public:
 	UserInputManager();
+	~UserInputManager();
 
 	static UserInputManager* getInstance();
 

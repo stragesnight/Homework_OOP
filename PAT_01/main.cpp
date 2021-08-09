@@ -15,14 +15,17 @@
 #include "UserInterface.h"
 #include "UserInputManager.h"
 
+#include "TextDocument/TextUserInterface.h"
+#include "TextDocument/TextSessionManager.h"
+
 int main()
 {
 	// create singleton instances
 	
-	SessionManager sm;
+	TextSessionManager tsm;
 	DiskIOManager diom;
 	PrinterIOManager piom;
-	//UserInterface ui;
+	TextUserInterface tui;
 	UserInputManager uim;
 
 	// start editor session
