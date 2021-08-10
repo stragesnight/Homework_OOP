@@ -14,9 +14,11 @@ protected:
 	DocumentFactory* documentFactory;
 	Document* selectedDocument;
 
-	// update loop, called every frame
+	bool shouldExit;
+
 	virtual int update() = 0;
 	virtual int processInput(char input) = 0;
+	virtual int processCommand() = 0;
 
 public:
 	SessionManager();
@@ -24,8 +26,11 @@ public:
 
 	static SessionManager* getInstance();
 	Document* getSelectedDocument();
+	DocumentFactory* getDocumentFactory();
 
-	// start session update loop
+	void selectDocument(const char* name);
+
 	virtual int startSession() = 0;
+	virtual void stopSession();
 };
 

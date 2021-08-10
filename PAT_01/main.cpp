@@ -10,9 +10,7 @@
 */
 
 #include "Document.h"
-#include "SessionManager.h"
 #include "DocumentIO.h"
-#include "UserInterface.h"
 #include "UserInputManager.h"
 
 #include "TextDocument/TextUserInterface.h"

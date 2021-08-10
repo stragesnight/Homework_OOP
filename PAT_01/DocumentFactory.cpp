@@ -22,29 +22,25 @@ void DocumentFactory::addDocument(Document* toAdd)
 
 	for (unsigned i = 0; i < nDocs - 1; i++)
 		newArr[i] = openDocuments[i];
-	newArr[nDocs] = toAdd;
+	newArr[nDocs - 1] = toAdd;
 
-	if (openDocuments != nullptr)
-		delete[] openDocuments;
+	delete[] openDocuments;
 
 	openDocuments = newArr;
 }
 
-template <class T> T* DocumentFactory::createDocument(const char* name)
+Document* DocumentFactory::openDocument(const char* filename, DocumentFileSpec* spec)
 {
-	try
-	{
-		T* res = new T(name);
-		addDocument(res);
-		return res;
-	}
-	catch (...)
-	{
-		return nullptr;
-	}
+	Document* opened = DiskIOManager::getInstance()->openDocument(filename, spec);
+	if (opened == nullptr)
+		return createDocument(filename);
+	
+	addDocument(opened);
+
+	return opened;
 }
 
-template <class T> T* DocumentFactory::getDocument(const char* name)
+Document* DocumentFactory::getDocument(const char* name)
 {
 	for (unsigned i = 0; i < nDocs; i++)
 	{
@@ -53,6 +49,14 @@ template <class T> T* DocumentFactory::getDocument(const char* name)
 	}
 
 	return nullptr;
+}
+
+Document* DocumentFactory::getDocumentByIndex(unsigned index)
+{
+	if (index >= nDocs)
+		return nullptr;
+
+	return openDocuments[index];
 }
 
 int DocumentFactory::closeDocument(const char* name)

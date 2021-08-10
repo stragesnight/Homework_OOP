@@ -1,4 +1,4 @@
-#include "TextUserInterface.h"
+﻿#include "TextUserInterface.h"
 
 #if defined (_WIN32) or defined (_WIN64)
 # include <Windows.h>

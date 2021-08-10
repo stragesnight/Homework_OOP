@@ -15,14 +15,24 @@ DiskIOManager::DiskIOManager()
 
 void DiskIOManager::appendToBuffer(char*& dst, const char* src)
 {
-	unsigned dstlen = strlen(dst);
-	unsigned srclen = strlen(dst);
+	unsigned dstlen = 0;
+	if (dst != nullptr)
+		dstlen = strlen(dst);
+	unsigned srclen = strlen(src);
 	char* res = new char[dstlen + srclen + 1];
 
-	memcpy(res, dst, dstlen);
-	memcpy(res + dstlen, src, srclen);
+	if (dstlen != 0)
+	{
+		for (unsigned i = 0; i < dstlen; i++)
+			res[i] = dst[i];
+	}
 
-	delete[] dst;
+	for (unsigned i = 0; i < srclen; i++)
+		res[dstlen + i] = src[i];
+	res[dstlen + srclen] = '\0';
+
+	if (dst != nullptr)
+		delete[] dst;
 	dst = res;
 }
 
@@ -38,7 +48,7 @@ int DiskIOManager::saveDocument(const char* filepath, DocumentFileSpec* fileSpec
 	if (!ofstr.is_open())
 		return 1;
 
-	char* buffer;
+	char* buffer = nullptr;
 	unsigned streamsize = fileSpec->getSaveData(buffer);
 
 	ofstr.write(buffer, streamsize);
@@ -54,13 +64,14 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	if (!ifstr.is_open())
 		return nullptr;
 
-	char* buffer = new char[1];
-	char tmp[256];
+	char* buffer = nullptr;
+	char tmp[256] {};
 	unsigned streamsize = 0;
 
 	while (!ifstr.eof())
 	{
-		ifstr.readsome(tmp, 256);
+		memset(tmp, 0, 256);
+		ifstr.getline(tmp, 256, '\0');
 		appendToBuffer(buffer, tmp);
 	}
 

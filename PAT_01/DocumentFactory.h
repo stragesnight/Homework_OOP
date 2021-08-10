@@ -6,17 +6,19 @@
 // safe document creation facility
 class DocumentFactory
 {
-private:
+protected:
 	Document** openDocuments;
 	unsigned nDocs;
 
 	void addDocument(Document* toAdd);
 public:
 	DocumentFactory();
-	~DocumentFactory();
+	virtual ~DocumentFactory();
 
-	template <class T> T* createDocument(const char* name);
-	template <class T> T* getDocument(const char* name);
+	virtual Document* createDocument(const char* name) = 0;
+	Document* openDocument(const char* filename, DocumentFileSpec* spec);
+	Document* getDocument(const char* name);
+	Document* getDocumentByIndex(unsigned index);
 	int closeDocument(const char* name);
 };
 

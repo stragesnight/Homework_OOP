@@ -5,13 +5,10 @@
 
 Document::Document(const char* name)
 {
-	unsigned len = strlen(name);
-	this->name = new char[len + 1];
+	this->name = nullptr;
 
-	for (unsigned i = 0; i < len; i++)
-		this->name[i] = name[i];
-	this->name[len] = '\0';
-
+	setName(name);
+	
 	this->fileSpec = nullptr;
 	this->renderer = nullptr;
 	this->editor = nullptr;
@@ -43,5 +40,18 @@ DocumentRenderer* Document::getRenderer()
 DocumentEditor* Document::getEditor() 
 {
 	return editor;
+}
+
+void Document::setName(const char* name)
+{
+	if (this->name != nullptr)
+		delete[] this->name;
+
+	unsigned len = strlen(name);
+	this->name = new char[len + 1];
+
+	for (unsigned i = 0; i < len; i++)
+		this->name[i] = name[i];
+	this->name[len] = '\0';
 }
 

@@ -10,9 +10,10 @@ _SOURCES = Document.cpp \
 		   UserInterface.cpp \
 		   TextDocument/TextDocument.cpp \
 		   TextDocument/TextDocumentInterfaces.cpp \
-		   TextDocument/TextSessionManager.cpp \
+		   TextDocument/TextDocumentFactory.cpp \
 		   TextDocument/TextUserInterface.cpp \
-		   SessionManager.cpp
+		   SessionManager.cpp \
+		   TextDocument/TextSessionManager.cpp
 SOURCES = $(patsubst %,$(SRC_DIR)/%,$(_SOURCES))
 
 OBJECTS = $(SOURCES:%.cpp=%.o)

@@ -62,5 +62,7 @@ public:
 	DocumentFileSpec* getFileSpec();
 	DocumentRenderer* getRenderer();
 	DocumentEditor* getEditor();
+
+	void setName(const char* name);
 };
 

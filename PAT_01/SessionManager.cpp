@@ -1,16 +1,14 @@
 ﻿#include "SessionManager.h"
 
 
-SessionManager* SessionManager::instance = nullptr;
-
 SessionManager::SessionManager()
 {
 	if (instance != nullptr)
 		return;
 
-	instance = this;
+	shouldExit = false;
 
-	documentFactory = new DocumentFactory();
+	documentFactory = nullptr;
 	selectedDocument = nullptr;
 }
 
@@ -28,5 +26,23 @@ SessionManager* SessionManager::getInstance()
 Document* SessionManager::getSelectedDocument()
 {
 	return selectedDocument;
+}
+
+DocumentFactory* SessionManager::getDocumentFactory()
+{
+	return documentFactory;
+}
+
+
+void SessionManager::selectDocument(const char* name)
+{
+	selectedDocument = documentFactory->getDocument(name);
+	if (selectedDocument == nullptr)
+		selectedDocument = documentFactory->createDocument(name);
+}
+
+void SessionManager::stopSession()
+{
+	shouldExit = true;
 }
 

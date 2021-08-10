@@ -7,7 +7,9 @@
 
 void TextDocumentFileSpec::appendToBuffer(char*& dst, const char* src)
 {
-	unsigned dstlen = strlen(dst);
+	unsigned dstlen = 0;
+	if (dst != nullptr)
+		dstlen = strlen(dst);
 	unsigned srclen = strlen(src);
 	char* res = new char[dstlen + srclen + 1]{};
 
@@ -43,8 +45,12 @@ unsigned TextDocumentFileSpec::getSaveData(char*& buffer)
 	if (buffer != nullptr)
 		delete[] buffer;
 	
-	const char* input_buff = ((TextDocument*)parent)->getBuffer();
 	appendToBuffer(buffer, "<TEXTDOCUMENT>\n");
+
+	const char* input_buff = ((TextDocument*)parent)->getBuffer();
+	if (input_buff == nullptr)
+		return 0;
+
 	appendToBuffer(buffer, input_buff);
 
 	return strlen(buffer);
@@ -70,6 +76,8 @@ int TextDocumentRenderer::draw()
 	TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
 	tui->drawText({0, 0}, buff, {0, 0}, 5);
 
+	puts(buff);
+
 	return 0;
 }
 
@@ -78,8 +86,12 @@ int TextDocumentEditor::editDocument(char input)
 {
 	switch (input)
 	{
+	case (char)127:
+		((TextDocument*)parent)->eraseFromBuffer(1);
+		break;
 	default:
-		printf("unimplemented input callback \"%c\"", input);
+		((TextDocument*)parent)->appendToBuffer(input);
+		break;
 	}
 
 	return 0;
