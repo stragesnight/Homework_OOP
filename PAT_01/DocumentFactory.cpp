@@ -1,6 +1,8 @@
 ﻿#include "DocumentFactory.h"
 #include "DocumentIO.h"
+
 #include <string.h>
+
 
 DocumentFactory::DocumentFactory()
 {
@@ -65,11 +67,23 @@ int DocumentFactory::closeDocument(const char* name)
 	{
 		if (strcmp(openDocuments[i]->getName(), name) == 0)
 		{
-			delete openDocuments[i];
 			nDocs--;
+			Document** newArr = new Document*[nDocs]{};
+
+			for (unsigned j = 0; j < i; j++)
+				newArr[j] = openDocuments[j];
+			for (unsigned j = i; j < nDocs; j++)
+				newArr[j] = openDocuments[j + 1];
+
+			delete openDocuments[i];
+			delete[] openDocuments;
+
+			openDocuments = newArr;
+
 			return 0;
 		}
 	}
 	return 1;
+
 }
 

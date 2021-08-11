@@ -41,6 +41,13 @@ void SessionManager::selectDocument(const char* name)
 		selectedDocument = documentFactory->createDocument(name);
 }
 
+void SessionManager::selectDocumentByIndex(unsigned index)
+{
+	selectedDocument = documentFactory->getDocumentByIndex(index);
+	if (selectedDocument == nullptr)
+		selectedDocument = documentFactory->createDocument("new");
+}
+
 void SessionManager::stopSession()
 {
 	shouldExit = true;

@@ -2,21 +2,29 @@
 
 #include "TextDocument.h"
 #include "TextDocumentFactory.h"
+#include "TextUserInterface.h"
 #include "../UserInputManager.h"
-#include "../UserInterface.h"
 #include "../DocumentIO.h"
 
-#include <string>
 #include <stdio.h>
+#include <string.h>
 
+TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
+
+#if defined (_WIN32) or defined (_WIN64)
+# define sprintfPI sprintf_s
+#else
+# define sprintfPI sprintf
+#endif
 
 // print help message
 int c_help(const char*)
 {
-	printf("help!!!\n");
+	tui->enqueueData(TUIElement::statusLine, "help!!!");
 	return 0;
 }
 
+// exit session
 int c_exit(const char*)
 {
 	TextSessionManager::getInstance()->stopSession();
@@ -30,7 +38,9 @@ int c_selectDocument(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
-	printf("selecting document \"%s\"...\n", arg);
+	char buff[256]{};
+	sprintfPI(buff, "selected document \"%s\".", arg);
+	tui->enqueueData(TUIElement::statusLine, buff);
 
 	TextSessionManager::getInstance()->selectDocument(arg);
 	return 0;
@@ -43,7 +53,9 @@ int c_openDocument(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
-	printf("opening document \"%s\"...\n", arg);
+	char buff[256]{};
+	sprintfPI(buff, "opened document \"%s\".", arg);
+	tui->enqueueData(TUIElement::statusLine, buff);
 
 	TextDocument* newDoc = new TextDocument(arg);
 
@@ -61,6 +73,9 @@ int c_setDocumentName(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
+	char buff[256]{};
+	sprintfPI(buff, "current document name is set to \"%s\".", arg);
+	tui->enqueueData(TUIElement::statusLine, buff);
 	TextSessionManager::getInstance()->getSelectedDocument()->setName(arg);
 
 	return 0;
@@ -69,9 +84,11 @@ int c_setDocumentName(const char* arg)
 // close selected session document and select first open document
 int c_closeDocument(const char*) 
 {
+	tui->enqueueData(TUIElement::statusLine, "closed current document.");
+	
 	SessionManager* instance = TextSessionManager::getInstance();
 	instance->getDocumentFactory()->closeDocument(instance->getSelectedDocument()->getName());
-	instance->selectDocument(instance->getDocumentFactory()->getDocumentByIndex(0)->getName());
+	instance->selectDocumentByIndex(0);
 	return 0;
 }
 
@@ -80,6 +97,11 @@ int c_closeDocument(const char*)
 int c_saveDocument(const char*)
 {
 	Document* selected = SessionManager::getInstance()->getSelectedDocument();
+
+	char buff[256]{};
+	sprintfPI(buff, "saved current document as \"%s\".", selected->getName());
+	tui->enqueueData(TUIElement::statusLine, buff);
+
 	DiskIOManager::getInstance()->saveDocument(selected->getName(), selected->getFileSpec()); 
 
 	return 0;
@@ -106,6 +128,7 @@ TextSessionManager::TextSessionManager() : SessionManager()
 	(*sessionCommands)["close"] = c_closeDocument;
 	(*sessionCommands)["save"] = c_saveDocument;
 
+	tui = ((TextUserInterface*)TextUserInterface::getInstance());
 	selectedDocument = documentFactory->createDocument("new");
 }
 
@@ -130,10 +153,8 @@ int TextSessionManager::update()
 			update_assert(selectedDocument->getEditor()->editDocument(userInput));
 	}
 	
-	update_assert(UserInterface::getInstance()->draw());
-
-	if (selectedDocument != nullptr)
-		update_assert(selectedDocument->getRenderer()->draw());
+	update_assert(selectedDocument->getRenderer()->draw());
+	update_assert(tui->draw());
 
 	return 0;
 }
@@ -144,7 +165,7 @@ int TextSessionManager::processInput(char input)
 	{
 	case '/':
 		if (processCommand() != 0)
-			printf("error during command processing\n");
+			tui->enqueueData(TUIElement::commandLine, "invalid command and/or arguments!");
 		return 1;
 	default:
 		return 0;
@@ -161,6 +182,8 @@ int TextSessionManager::processCommand()
 	char lastInput = -1;
 
 	UserInputManager* uim = UserInputManager::getInstance();
+
+	tui->startCommand();
 
 	for (unsigned i = 0;; i++)
 	{
@@ -189,8 +212,6 @@ int TextSessionManager::processCommand()
 
 		putchar(currBuff[i]);
 	} 
-
-	printf("\nprocessed command, buffers - \"%s\", \"%s\"\n", comBuff, argBuff);
 
 	int (*callback)(const char*) = (*sessionCommands)[comBuff];
 

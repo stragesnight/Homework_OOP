@@ -6,9 +6,20 @@
 struct vec2d
 {
 	unsigned x, y;
-	
-	unsigned length();
-	vec2d lerp(const vec2d& other, float t);
+};
+
+
+struct rect
+{
+	vec2d ul, lr;
+};
+
+
+enum class TUIElement
+{
+	textBuffer 	= 0b0001,
+	commandLine = 0b0010,
+	statusLine 	= 0b0100
 };
 
 class TextUserInterface : public UserInterface
@@ -18,8 +29,22 @@ private:
 	unsigned screenWidth;
 	unsigned screenHeight;
 
+	unsigned char queueFlags;
+
+	struct element
+	{
+		TUIElement flag;
+		rect bounds;
+		const char* data;
+	};
+
+	element textBufferElement;
+	element commandLineElement;
+	element statusLineElement;
+
+	element* UIElements[3];
+
 	void moveCursor(const vec2d& pos);
-	void clampToScreen(vec2d& pos);
 
 public:
 	TextUserInterface();
@@ -27,9 +52,16 @@ public:
 
 	int draw() override;
 
-	void drawLine(const vec2d& pos, unsigned depth, char body);
-	void drawBox(const vec2d& pos, unsigned depth, char border, char body);
-	void drawText(const vec2d& pos, const char* text, 
-			const vec2d& boudary = {0, 0}, unsigned margin = 1);
+	void clearScreen();
+
+	void drawLine(const vec2d& from, const vec2d& to, char body);
+	void drawPipe(const vec2d& from, const vec2d& to, char body);
+	void drawBox(const rect& box, char body, char border);
+	void drawText(const char* text, const rect& boudary);
+
+	void enqueueData(TUIElement flag, const char* data);
+	bool isEnqueued(TUIElement flag);
+
+	void startCommand();
 };
 

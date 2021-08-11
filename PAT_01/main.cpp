@@ -20,11 +20,11 @@ int main()
 {
 	// create singleton instances
 	
-	TextSessionManager tsm;
+	TextUserInterface tui;
 	DiskIOManager diom;
 	PrinterIOManager piom;
-	TextUserInterface tui;
 	UserInputManager uim;
+	TextSessionManager tsm;
 
 	// start editor session
 	return SessionManager::getInstance()->startSession();

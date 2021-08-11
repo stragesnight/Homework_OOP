@@ -74,9 +74,8 @@ int TextDocumentRenderer::draw()
 {
 	const char* buff = ((TextDocument*)parent)->getBuffer();
 	TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
-	tui->drawText({0, 0}, buff, {0, 0}, 5);
 
-	puts(buff);
+	tui->enqueueData(TUIElement::textBuffer, buff);
 
 	return 0;
 }

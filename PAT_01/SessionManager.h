@@ -29,6 +29,7 @@ public:
 	DocumentFactory* getDocumentFactory();
 
 	void selectDocument(const char* name);
+	void selectDocumentByIndex(unsigned index);
 
 	virtual int startSession() = 0;
 	virtual void stopSession();
