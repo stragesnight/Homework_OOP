@@ -65,13 +65,13 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 		return nullptr;
 
 	char* buffer = nullptr;
-	char tmp[256] {};
+	char tmp[32568] {};
 	unsigned streamsize = 0;
 
 	while (!ifstr.eof())
 	{
-		memset(tmp, 0, 256);
-		ifstr.getline(tmp, 256, '\0');
+		memset(tmp, 0, 32568);
+		ifstr.getline(tmp, 32568, '\0');
 		appendToBuffer(buffer, tmp);
 	}
 

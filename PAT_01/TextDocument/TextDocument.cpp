@@ -1,7 +1,5 @@
 ﻿#include "TextDocument.h"
 
-#include <stdio.h>
-
 
 TextDocument::TextDocument(const char* name)
 	: Document(name)
@@ -10,7 +8,7 @@ TextDocument::TextDocument(const char* name)
 	this->renderer = new TextDocumentRenderer(this);
 	this->editor = new TextDocumentEditor(this);
 
-	this->textBuffer = new char[0xFF];
+	this->textBuffer = new char[0xFF]{};
 	this->buffSize = 0xFF;
 	this->textLen = 0;
 }
@@ -84,8 +82,6 @@ void TextDocument::eraseFromBuffer(unsigned count)
 {
 	long newLen = (long)textLen - (long)count;
 	newLen = (newLen < 0) ? 0 : newLen; 
-
-	printf("textLen = %d, newLen = %d\n", textLen, (int)newLen);
 
 	for (unsigned i = textLen; i > newLen; i--)
 		textBuffer[i] = '\0';

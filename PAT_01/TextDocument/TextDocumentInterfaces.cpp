@@ -85,7 +85,12 @@ int TextDocumentEditor::editDocument(char input)
 {
 	switch (input)
 	{
+	case '\b':
 	case (char)127:
+#if defined (_WIN32) or defined (_WIN64)
+		((TextUserInterface*)TextUserInterface::getInstance())
+			->clearScreen();
+#endif
 		((TextDocument*)parent)->eraseFromBuffer(1);
 		break;
 	default:

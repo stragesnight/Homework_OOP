@@ -12,9 +12,9 @@
 TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
 
 #if defined (_WIN32) or defined (_WIN64)
-# define sprintfPI sprintf_s
+# define sprintfPI snprintf
 #else
-# define sprintfPI sprintf
+# define sprintfPI snprintf
 #endif
 
 // print help message
@@ -38,9 +38,14 @@ int c_selectDocument(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
+#if defined (_WIN32) or defined (_WIN64)
+	tui->enqueueData(TUIElement::statusLine, "document selected.");
+	tui->clearScreen();
+#else
 	char buff[256]{};
-	sprintfPI(buff, "selected document \"%s\".", arg);
+	sprintfPI(buff, 256, "selected document \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
+#endif
 
 	TextSessionManager::getInstance()->selectDocument(arg);
 	return 0;
@@ -53,9 +58,14 @@ int c_openDocument(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
+#if defined (_WIN32) or defined (_WIN64)
+	tui->enqueueData(TUIElement::statusLine, "document opened.");
+	tui->clearScreen();
+#else
 	char buff[256]{};
-	sprintfPI(buff, "opened document \"%s\".", arg);
+	sprintfPI(buff, 256, "opened document \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
+#endif
 
 	TextDocument* newDoc = new TextDocument(arg);
 
@@ -73,10 +83,14 @@ int c_setDocumentName(const char* arg)
 	if (arg == nullptr)
 		return 1;
 
+#if defined (_WIN32) or defined (_WIN64)
+	tui->enqueueData(TUIElement::statusLine, "document name changed.");
+#else
 	char buff[256]{};
-	sprintfPI(buff, "current document name is set to \"%s\".", arg);
+	sprintfPI(buff, 256, "current document name is set to \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
 	TextSessionManager::getInstance()->getSelectedDocument()->setName(arg);
+#endif
 
 	return 0;
 }
@@ -85,7 +99,11 @@ int c_setDocumentName(const char* arg)
 int c_closeDocument(const char*) 
 {
 	tui->enqueueData(TUIElement::statusLine, "closed current document.");
-	
+
+#if defined (_WIN32) or defined (_WIN64)
+	tui->clearScreen();
+#endif
+
 	SessionManager* instance = TextSessionManager::getInstance();
 	instance->getDocumentFactory()->closeDocument(instance->getSelectedDocument()->getName());
 	instance->selectDocumentByIndex(0);
@@ -98,9 +116,14 @@ int c_saveDocument(const char*)
 {
 	Document* selected = SessionManager::getInstance()->getSelectedDocument();
 
+
+#if defined (_WIN32) or defined (_WIN64)
+	tui->enqueueData(TUIElement::statusLine, "current document saved.");
+#else
 	char buff[256]{};
-	sprintfPI(buff, "saved current document as \"%s\".", selected->getName());
+	sprintfPI(buff, 256, "saved current document as \"%s\".", selected->getName());
 	tui->enqueueData(TUIElement::statusLine, buff);
+#endif
 
 	DiskIOManager::getInstance()->saveDocument(selected->getName(), selected->getFileSpec()); 
 
@@ -200,7 +223,7 @@ int TextSessionManager::processCommand()
 			putchar(' ');
 			continue;
 		}
-		else if (lastInput == 127)
+		else if (lastInput == '\b' || lastInput == 127)
 		{
 			i = (i <= 1) ? -1 : i - 2;
 			currBuff[i + 2] = '\0';

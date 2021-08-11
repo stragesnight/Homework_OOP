@@ -59,15 +59,13 @@ TextUserInterface::TextUserInterface()
 	UIElements[2] = &statusLineElement;
 
 	clearScreen();
-	drawBox({{0, 0}, {screenWidth, screenHeight}}, ' ', '#');
-	drawLine({1, screenHeight - 4}, {screenWidth, screenHeight - 4}, '#');
-	drawLine({1, screenHeight - 2}, {screenWidth, screenHeight - 2}, '#');
 }
 
 void TextUserInterface::moveCursor(const vec2d& pos)
 {
 #if defined (_WIN32) or defined (_WIN64)
-	SetConsoleCursorPosition(pos.x, pos.y);
+	COORD coord = {(short)pos.x, (short)pos.y};
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else
 	printf("\033[%d;%df", pos.y, pos.x);
 #endif
@@ -81,6 +79,9 @@ int TextUserInterface::draw()
 
 		if (isEnqueued(curr->flag))
 		{
+#if defined (_WIN32) or defined (_WIN64)
+			if (curr->flag != TUIElement::textBuffer)
+#endif
 			drawBox(curr->bounds, ' ', ' ');
 			drawText(curr->data, curr->bounds);
 		}
@@ -95,9 +96,14 @@ void TextUserInterface::clearScreen()
 {
 #if defined (_WIN32) or defined (_WIN64)
 	system("cls");
-	moveCursor(0, 0);
+	drawLine({ 0, screenHeight - 2 }, { screenWidth, screenHeight - 2 }, '#');
+	drawLine({ 0, screenHeight - 4 }, { screenWidth, screenHeight - 4 }, '#');
+	drawLine({ 0, 0 }, { screenWidth, 0 }, '#');
 #else
 	printf("\033[2J");
+	drawBox({ {0, 0}, {screenWidth, screenHeight} }, ' ', '#');
+	drawLine({ 1, screenHeight - 4 }, { screenWidth, screenHeight - 4 }, '#');
+	drawLine({ 1, screenHeight - 2 }, { screenWidth, screenHeight - 2 }, '#');
 #endif
 }
 
@@ -128,8 +134,8 @@ void TextUserInterface::drawBox(const rect& box, char body, char border)
 {
 	for (unsigned y = box.ul.y; y < box.lr.y; y++)
 		drawLine({box.ul.x, y}, {box.lr.x, y}, body);
-	drawLine(box.ul, {box.lr.x, box.ul.y}, border);
 	drawLine({box.ul.x, box.lr.y}, box.lr, border);
+	drawLine(box.ul, {box.lr.x, box.ul.y}, border);
 
 	drawPipe(box.ul, {box.ul.x, box.lr.y}, border);
 	drawPipe({box.lr.x, box.ul.y}, box.lr, border);
@@ -144,7 +150,7 @@ void TextUserInterface::drawText(const char* text, const rect& boundary)
 
 	for (unsigned i = 0; i < textLen; i++)
 	{
-		if (text[i] == '\n' || cursorPos.x >= boundary.lr.x)
+		if (text[i] == 13 || text[i] == '\n' || cursorPos.x >= boundary.lr.x)
 		{
 			cursorPos.x = boundary.ul.x;
 			cursorPos.y++;
