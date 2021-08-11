@@ -21,11 +21,8 @@ void DiskIOManager::appendToBuffer(char*& dst, const char* src)
 	unsigned srclen = strlen(src);
 	char* res = new char[dstlen + srclen + 1];
 
-	if (dstlen != 0)
-	{
-		for (unsigned i = 0; i < dstlen; i++)
-			res[i] = dst[i];
-	}
+	for (unsigned i = 0; i < dstlen; i++)
+		res[i] = dst[i];
 
 	for (unsigned i = 0; i < srclen; i++)
 		res[dstlen + i] = src[i];
@@ -65,13 +62,13 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 		return nullptr;
 
 	char* buffer = nullptr;
-	char tmp[32568] {};
+	char* tmp = new char[1024]{};
 	unsigned streamsize = 0;
 
 	while (!ifstr.eof())
 	{
-		memset(tmp, 0, 32568);
-		ifstr.getline(tmp, 32568, '\0');
+		memset(tmp, 0, 1024);
+		ifstr.read(tmp, 1024);
 		appendToBuffer(buffer, tmp);
 	}
 

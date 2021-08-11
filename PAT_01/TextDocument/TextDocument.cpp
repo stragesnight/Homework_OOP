@@ -11,6 +11,8 @@ TextDocument::TextDocument(const char* name)
 	this->textBuffer = new char[0xFF]{};
 	this->buffSize = 0xFF;
 	this->textLen = 0;
+
+	setBuffer("");
 }
 
 TextDocument::~TextDocument()
@@ -28,8 +30,7 @@ const char* TextDocument::getBuffer()
 void TextDocument::setBuffer(const char* textBuffer)
 {
 	unsigned len = strlen(textBuffer);
-	unsigned newSize = ((len + 1) / 0xFF) * 0xFF;
-	newSize += 0xFF * (newSize == 0);
+	unsigned newSize = ((len + 1) / 0xFF) * 0xFF + 0xFF;
 	
 	if (this->textBuffer != nullptr)
 		delete[] this->textBuffer;

@@ -95,11 +95,19 @@ int TextUserInterface::draw()
 void TextUserInterface::clearScreen()
 {
 #if defined (_WIN32) or defined (_WIN64)
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	screenWidth = csbi.dwSize.X;
+	screenHeight = csbi.dwSize.Y;
 	system("cls");
 	drawLine({ 0, screenHeight - 2 }, { screenWidth, screenHeight - 2 }, '#');
 	drawLine({ 0, screenHeight - 4 }, { screenWidth, screenHeight - 4 }, '#');
 	drawLine({ 0, 0 }, { screenWidth, 0 }, '#');
 #else
+	winsize size;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+	screenWidth = size.ws_col;
+	screenHeight = size.ws_row;
 	printf("\033[2J");
 	drawBox({ {0, 0}, {screenWidth, screenHeight} }, ' ', '#');
 	drawLine({ 1, screenHeight - 4 }, { screenWidth, screenHeight - 4 }, '#');

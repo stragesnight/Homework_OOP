@@ -17,13 +17,6 @@ TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
 # define sprintfPI snprintf
 #endif
 
-// print help message
-int c_help(const char*)
-{
-	tui->enqueueData(TUIElement::statusLine, "help!!!");
-	return 0;
-}
-
 // exit session
 int c_exit(const char*)
 {
@@ -116,7 +109,6 @@ int c_saveDocument(const char*)
 {
 	Document* selected = SessionManager::getInstance()->getSelectedDocument();
 
-
 #if defined (_WIN32) or defined (_WIN64)
 	tui->enqueueData(TUIElement::statusLine, "current document saved.");
 #else
@@ -126,6 +118,14 @@ int c_saveDocument(const char*)
 #endif
 
 	DiskIOManager::getInstance()->saveDocument(selected->getName(), selected->getFileSpec()); 
+
+	return 0;
+}
+
+int c_refreshScreen(const char*)
+{
+	tui->clearScreen();
+	tui->enqueueData(TUIElement::statusLine, "screen refreshed, size adjusted.");
 
 	return 0;
 }
@@ -143,16 +143,15 @@ TextSessionManager::TextSessionManager() : SessionManager()
 	sessionCommands = new std::map<std::string, int(*)(const char*)>();
 	documentFactory = new TextDocumentFactory();
 
-	(*sessionCommands)["help"] = c_help;
 	(*sessionCommands)["exit"] = c_exit;
 	(*sessionCommands)["select"] = c_selectDocument;
 	(*sessionCommands)["open"] = c_openDocument;
 	(*sessionCommands)["setname"] = c_setDocumentName;
 	(*sessionCommands)["close"] = c_closeDocument;
 	(*sessionCommands)["save"] = c_saveDocument;
+	(*sessionCommands)["refresh"] = c_refreshScreen;
 
 	tui = ((TextUserInterface*)TextUserInterface::getInstance());
-	selectedDocument = documentFactory->createDocument("new");
 }
 
 TextSessionManager::~TextSessionManager()
@@ -248,7 +247,10 @@ int TextSessionManager::startSession()
 {
 	int exitcode = 0;
 
-	
+	c_openDocument("greeting");
+	selectedDocument->getRenderer()->draw();
+	tui->draw();
+
 	while (!shouldExit)
 		exitcode = update();
 
