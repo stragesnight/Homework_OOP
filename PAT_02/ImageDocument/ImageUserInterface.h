@@ -31,16 +31,16 @@ private:
 
 	element* UIElements[3];
 
-	void moveCursor(const uvec2d& pos);
-
 public:
 	ImageUserInterface();
 	~ImageUserInterface() override {}
 
-	int draw() override;
+	const uvec2d& getCanvasSize();
 
 	void clearScreen();
+	void moveCursor(const uvec2d& pos);
 
+	int draw() override;
 	void drawLine(const uvec2d& from, const uvec2d& to, char body);
 	void drawPipe(const uvec2d& from, const uvec2d& to, char body);
 	void drawBox(const rect& box, char body, char border);

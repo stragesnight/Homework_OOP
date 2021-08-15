@@ -6,6 +6,9 @@
 class ImageDocumentFileSpec : public DocumentFileSpec
 {
 private:
+	unsigned appendToBuffer(char*& dst, unsigned dstlen, 
+						const char* src, unsigned srclen);
+	void copyBuffer(char*& dst, const char*& src, unsigned len);
 	bool isValid(const char*& buffer);
 public:
 	ImageDocumentFileSpec(Document* parent)

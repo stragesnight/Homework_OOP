@@ -13,18 +13,18 @@
 #include "DocumentIO.h"
 #include "UserInputManager.h"
 
-#include "TextDocument/TextUserInterface.h"
-#include "TextDocument/TextSessionManager.h"
+#include "ImageDocument/ImageUserInterface.h"
+#include "ImageDocument/ImageSessionManager.h"
 
 int main()
 {
 	// create singleton instances
 	
-	TextUserInterface tui;
+	ImageUserInterface iui;
 	DiskIOManager diom;
 	PrinterIOManager piom;
 	UserInputManager uim;
-	TextSessionManager tsm;
+	ImageSessionManager tsm;
 
 	// start editor session
 	return SessionManager::getInstance()->startSession();

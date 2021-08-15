@@ -10,7 +10,8 @@ class DiskIOManager
 private:
 	static DiskIOManager* instance;
 
-	void appendToBuffer(char*& dst, const char* src);
+	unsigned appendToBuffer(char*& dst, unsigned dstlen, 
+						const char* src, unsigned srclen);
 
 public:
 	DiskIOManager();

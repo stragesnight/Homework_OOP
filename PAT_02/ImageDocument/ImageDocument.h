@@ -52,19 +52,23 @@ private:
 	Cell* cellBuffer;
 
 	void fill(const rect& rect, const Cell& cell);
-	void resize(const uvec2d& size);
+
+	uvec2d clampToSize(const uvec2d& pos);
 
 public:
 	ImageDocument(const char* name, const uvec2d& size);
 	~ImageDocument();
 
 	const uvec2d& getSize();
+	const Cell* getCells();
 	const Cell& getCell(const uvec2d& pos);
 	char getChar(const uvec2d& pos);
 	c_color getColor(const uvec2d& pos);
 
 	void setSize(const uvec2d& size);
 	void setCell(const uvec2d& pos, const Cell& cell);
+	void setCells(Cell* cells);
 	void setChar(const uvec2d& pos, char ch);
 	void setColor(const uvec2d& pos, c_color color);
 };
+

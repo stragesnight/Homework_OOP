@@ -13,24 +13,23 @@ DiskIOManager::DiskIOManager()
 		instance = this;
 }
 
-void DiskIOManager::appendToBuffer(char*& dst, const char* src)
+unsigned DiskIOManager::appendToBuffer(char*& dst, unsigned dstlen,
+										   const char* src, unsigned srclen)
 {
-	unsigned dstlen = 0;
-	if (dst != nullptr)
-		dstlen = strlen(dst);
-	unsigned srclen = strlen(src);
-	char* res = new char[dstlen + srclen + 1];
+	char* res = new char[dstlen + srclen + 1]{};
 
 	for (unsigned i = 0; i < dstlen; i++)
 		res[i] = dst[i];
 
 	for (unsigned i = 0; i < srclen; i++)
 		res[dstlen + i] = src[i];
+
 	res[dstlen + srclen] = '\0';
 
-	if (dst != nullptr)
-		delete[] dst;
+	delete[] dst;
 	dst = res;
+
+	return dstlen + srclen + 1;
 }
 
 DiskIOManager* DiskIOManager::getInstance()
@@ -68,8 +67,8 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	while (!ifstr.eof())
 	{
 		memset(tmp, 0, 1024);
-		ifstr.read(tmp, 1024);
-		appendToBuffer(buffer, tmp);
+		unsigned readsize = ifstr.readsome(tmp, 1024);
+		streamsize = appendToBuffer(buffer, streamsize, tmp, readsize);
 	}
 
 	ifstr.close();
