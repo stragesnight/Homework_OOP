@@ -28,8 +28,8 @@ public:
 	Document* getSelectedDocument();
 	DocumentFactory* getDocumentFactory();
 
-	void selectDocument(const char* name);
-	void selectDocumentByIndex(unsigned index);
+	virtual void selectDocument(const char* name);
+	virtual void selectDocumentByIndex(unsigned index);
 
 	virtual int startSession() = 0;
 	virtual void stopSession();

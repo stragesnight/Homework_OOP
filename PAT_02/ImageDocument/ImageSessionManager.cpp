@@ -114,7 +114,8 @@ int c_saveDocument(const char*)
 	tui->enqueueData(TUIElement::statusLine, buff);
 #endif
 
-	DiskIOManager::getInstance()->saveDocument(selected->getName(), selected->getFileSpec()); 
+	DiskIOManager::getInstance()->saveDocument(selected->getName(), 
+			selected->getFileSpec()); 
 
 	return 0;
 }
@@ -239,6 +240,20 @@ int ImageSessionManager::processCommand()
 		return 1;
 
 	return callback(argBuff);
+}
+
+void ImageSessionManager::selectDocument(const char* name)
+{
+	SessionManager::selectDocument(name);
+	ImageDocument* doc = (ImageDocument*)selectedDocument;
+	tui->drawCells(doc->getCells(), doc->getSize());
+}
+
+void ImageSessionManager::selectDocumentByIndex(unsigned index)
+{
+	SessionManager::selectDocumentByIndex(index);
+	ImageDocument* doc = (ImageDocument*)selectedDocument;
+	tui->drawCells(doc->getCells(), doc->getSize());
 }
 
 int ImageSessionManager::startSession()

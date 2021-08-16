@@ -1,7 +1,7 @@
 ﻿#include "ImageDocument.h"
 
 
-ImageDocument::ImageDocument(const char* name, const uvec2d& size)
+ImageDocument::ImageDocument(const char* name, uvec2d size)
 	: Document(name)
 {
 	this->fileSpec = new ImageDocumentFileSpec(this);
@@ -11,7 +11,7 @@ ImageDocument::ImageDocument(const char* name, const uvec2d& size)
 	this->size = size;
 	this->cellBuffer = new Cell[size.x * size.y + 1];
 
-	fill(rect{{0, 0}, size}, Cell{' ', c_color::black});
+	fill(rect{{0, 0}, size}, Cell{'.', c_color::purple});
 }
 
 ImageDocument::~ImageDocument()
@@ -32,8 +32,8 @@ void ImageDocument::fill(const rect& box, const Cell& cell)
 uvec2d ImageDocument::clampToSize(const uvec2d& pos)
 {
 	return uvec2d{
-		(pos.x >= size.x) ? size.x : pos.x,
-		(pos.y >= size.y) ? size.y : pos.y
+		(pos.x > size.x) ? size.x : pos.x,
+		(pos.y > size.y) ? size.y : pos.y
 	};
 }
 

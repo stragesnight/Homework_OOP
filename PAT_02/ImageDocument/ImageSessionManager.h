@@ -17,4 +17,6 @@ public:
 	ImageSessionManager();
 	~ImageSessionManager() override;
 	int startSession() override;
+	void selectDocument(const char* name) override;
+	void selectDocumentByIndex(unsigned index) override;
 };

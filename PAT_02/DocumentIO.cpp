@@ -63,11 +63,12 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	char* buffer = nullptr;
 	char* tmp = new char[1024]{};
 	unsigned streamsize = 0;
+	unsigned readsize = -1;
 
-	while (!ifstr.eof())
+	while (!ifstr.eof() && readsize != 0)
 	{
 		memset(tmp, 0, 1024);
-		unsigned readsize = ifstr.readsome(tmp, 1024);
+		readsize = ifstr.readsome(tmp, 1024);
 		streamsize = appendToBuffer(buffer, streamsize, tmp, readsize);
 	}
 

@@ -1,6 +1,7 @@
 ﻿#include "ImageDocumentInterfaces.h"
 
 #include "ImageUserInterface.h"
+#include "../UserInputManager.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -53,7 +54,7 @@ unsigned ImageDocumentFileSpec::getSaveData(char*& buffer)
 	if (buffer != nullptr)
 		delete[] buffer;
 
-	ImageDocument* parent = ((ImageDocument*)parent);
+	ImageDocument* parent = (ImageDocument*)parent;
 	unsigned bufflen = 0;
 
 	const char magic[] = "<IMAGEDOCUMENT>\n";
@@ -66,7 +67,7 @@ unsigned ImageDocumentFileSpec::getSaveData(char*& buffer)
 	if (cellBuffer == nullptr)
 		return bufflen;
 	unsigned cellBufferLength = sizeof(ImageDocument::Cell) * imageSize.x * imageSize.y;
-	appendToBuffer(buffer, bufflen, cellBuffer, cellBufferLength);
+	//appendToBuffer(buffer, bufflen, cellBuffer, cellBufferLength);
 
 	return bufflen;
 }
@@ -106,24 +107,56 @@ int ImageDocumentRenderer::draw()
 }
 
 
-ImageDocumentEditor::ImageDocumentEditor(Document* parent)
-	: DocumentEditor(parent)
-{
-	drawingHeadPos = { 0, 0 };
-}
-
-
 int ImageDocumentEditor::editDocument(char input)
 {
+	ImageUserInterface* iui = (ImageUserInterface*)ImageUserInterface::getInstance();
+	UserInputManager* uim = UserInputManager::getInstance();
+	ImageDocument* pParent = (ImageDocument*)parent;
+	uvec2d canvasSize = iui->getCanvasSize();
+
 	switch (input)
 	{
+	// navigation
+	case 's':
+	case 'j':
+		if (drawingHeadPos.y < canvasSize.y - 1)
+			drawingHeadPos.y++;
+		break;
+	case 'w':
+	case 'k':
+		if (drawingHeadPos.y > 1)
+			drawingHeadPos.y--;
+		break;
+	case 'd':
+	case 'l':
+		if (drawingHeadPos.x < canvasSize.x - 1)
+			drawingHeadPos.x++;
+		break;
+	case 'a':
+	case 'h':
+		if (drawingHeadPos.x > 0)
+			drawingHeadPos.x--;
+		break;
+	// change character
+	case 'c':
+	{
+		uim->recieveInput();
+		pParent->setChar(drawingHeadPos, uim->lastInput()); 
+		iui->enqueueData(TUIElement::cellBuffer, (const char*)pParent->getCells());
+		break;
+	}
+	// change color
+	case 'r':
+		iui->enqueueData(TUIElement::cellBuffer, (const char*)pParent->getCells());
+		break;
 	default:
 		char buff[256]{};
 		snprintf(buff, 256, "unhandled input \'%c\'", input);
-		((ImageUserInterface*)ImageUserInterface::getInstance())
-			->enqueueData(TUIElement::statusLine, buff);
+		iui->enqueueData(TUIElement::statusLine, buff);
 		break;
 	}
+
+	iui->moveDrawingHead(drawingHeadPos);
 
 	return 0;
 }

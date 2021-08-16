@@ -43,7 +43,9 @@ private:
 	uvec2d drawingHeadPos;
 
 public:
-	ImageDocumentEditor(Document* parent);
+	ImageDocumentEditor(Document* parent)
+		: DocumentEditor(parent), drawingHeadPos({0, 0})
+	{}
 	int editDocument(char input) override;
 };
 

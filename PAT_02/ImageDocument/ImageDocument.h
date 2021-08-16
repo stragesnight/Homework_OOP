@@ -59,7 +59,7 @@ private:
 	uvec2d clampToSize(const uvec2d& pos);
 
 public:
-	ImageDocument(const char* name, const uvec2d& size);
+	ImageDocument(const char* name, uvec2d size);
 	~ImageDocument();
 
 	const uvec2d& getSize();
