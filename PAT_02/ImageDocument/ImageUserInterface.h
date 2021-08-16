@@ -17,6 +17,7 @@ class ImageUserInterface : public UserInterface
 {
 private:
 	uvec2d screenSize;
+	uvec2d imageSize;
 	uvec2d drawingHeadPos;
 
 	unsigned char queueFlags;
@@ -36,6 +37,7 @@ public:
 	ImageUserInterface();
 	~ImageUserInterface() override {}
 
+	void setImageSize(const uvec2d& size);
 	uvec2d getCanvasSize();
 
 	void clearScreen();
@@ -47,8 +49,8 @@ public:
 	void drawPipe(const uvec2d& from, const uvec2d& to, char body);
 	void drawBox(const rect& box, char body, char border);
 	void drawText(const char* text, const rect& boudary);
-	void drawCellAtDrawingHead(const Cell& cell);
-	void drawCells(const Cell* cells, const uvec2d& imageSize);
+	void drawCellAtDrawingHead();
+	void drawCells(const Cell* cells);
 
 	void enqueueData(TUIElement flag, const char* data);
 	bool isEnqueued(TUIElement flag);

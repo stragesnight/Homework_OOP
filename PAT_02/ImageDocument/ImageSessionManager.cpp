@@ -54,8 +54,7 @@ int c_openDocument(const char* arg)
 	tui->enqueueData(TUIElement::statusLine, buff);
 #endif
 
-	uvec2d canvasSize = tui->getCanvasSize();
-	ImageDocument* newDoc = new ImageDocument(arg, canvasSize);
+	ImageDocument* newDoc = new ImageDocument(arg, {64, 16});
 
 	SessionManager* instance = ImageSessionManager::getInstance();
 	instance->getDocumentFactory()->openDocument(arg, newDoc->getFileSpec());
@@ -124,6 +123,10 @@ int c_refreshScreen(const char*)
 {
 	tui->clearScreen();
 	tui->enqueueData(TUIElement::statusLine, "screen refreshed, size adjusted.");
+
+	ImageDocument* doc = (ImageDocument*)SessionManager::getInstance()
+		->getSelectedDocument();
+	tui->drawCells(doc->getCells());
 
 	return 0;
 }
@@ -246,14 +249,16 @@ void ImageSessionManager::selectDocument(const char* name)
 {
 	SessionManager::selectDocument(name);
 	ImageDocument* doc = (ImageDocument*)selectedDocument;
-	tui->drawCells(doc->getCells(), doc->getSize());
+	tui->setImageSize(doc->getSize());
+	tui->drawCells(doc->getCells());
 }
 
 void ImageSessionManager::selectDocumentByIndex(unsigned index)
 {
 	SessionManager::selectDocumentByIndex(index);
 	ImageDocument* doc = (ImageDocument*)selectedDocument;
-	tui->drawCells(doc->getCells(), doc->getSize());
+	tui->setImageSize(doc->getSize());
+	tui->drawCells(doc->getCells());
 }
 
 int ImageSessionManager::startSession()

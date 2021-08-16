@@ -25,24 +25,8 @@ ImageUserInterface::ImageUserInterface()
 	screenSize.x = size.ws_col;
 	screenSize.y = size.ws_row;
 #endif
-
 	queueFlags = 0;
-	drawingHeadPos = { 0, 0 };
-
-	cellBufferElement.flag = TUIElement::cellBuffer;
-	cellBufferElement.bounds.ul = { 5, 3 };
-	cellBufferElement.bounds.lr = { screenSize.x - 4, screenSize.y - 8 };
-	cellBufferElement.data = nullptr;
-
-	commandLineElement.flag = TUIElement::commandLine;
-	commandLineElement.bounds.ul = { 5, screenSize.y - 3 };
-	commandLineElement.bounds.lr = { screenSize.x - 4, screenSize.y - 3 };
-	commandLineElement.data = nullptr;
-
-	statusLineElement.flag = TUIElement::statusLine;
-	statusLineElement.bounds.ul = { 5, screenSize.y - 1 };
-	statusLineElement.bounds.lr = { screenSize.x - 4, screenSize.y - 1 };
-	statusLineElement.data = nullptr;
+	imageSize = { 0, 0 };
 
 	clearScreen();
 }
@@ -85,17 +69,17 @@ int ImageUserInterface::draw()
 		drawText(statusLineElement.data, statusLineElement.bounds);
 	}
 
-	Cell* cells = (Cell*)cellBufferElement.data;
 	if (isEnqueued(TUIElement::cellBuffer))
-	{
-		drawCells(cells, getCanvasSize());
-		moveCursor(drawingHeadPos);
-		//drawCellAtDrawingHead(cells[drawingHeadPos.x * drawingHeadPos.y]);
-	}
+		drawCellAtDrawingHead();
 
 	queueFlags = 0;
 
 	return 0;
+}
+
+void ImageUserInterface::setImageSize(const uvec2d& size)
+{
+	imageSize = size;
 }
 
 uvec2d ImageUserInterface::getCanvasSize()
@@ -124,6 +108,23 @@ void ImageUserInterface::clearScreen()
 	drawLine({ 1, screenSize.y - 4 }, { screenSize.x, screenSize.y - 4 }, '#');
 	drawLine({ 1, screenSize.y - 2 }, { screenSize.x, screenSize.y - 2 }, '#');
 #endif
+
+	cellBufferElement.flag = TUIElement::cellBuffer;
+	cellBufferElement.bounds.ul = { 5, 3 };
+	cellBufferElement.bounds.lr = { screenSize.x - 4, screenSize.y - 8 };
+	cellBufferElement.data = nullptr;
+
+	commandLineElement.flag = TUIElement::commandLine;
+	commandLineElement.bounds.ul = { 5, screenSize.y - 3 };
+	commandLineElement.bounds.lr = { screenSize.x - 4, screenSize.y - 3 };
+	commandLineElement.data = nullptr;
+
+	statusLineElement.flag = TUIElement::statusLine;
+	statusLineElement.bounds.ul = { 5, screenSize.y - 1 };
+	statusLineElement.bounds.lr = { screenSize.x - 4, screenSize.y - 1 };
+	statusLineElement.data = nullptr;
+
+	drawingHeadPos = cellBufferElement.bounds.ul;
 }
 
 void ImageUserInterface::drawLine(const uvec2d& from, const uvec2d& to, char body)
@@ -187,9 +188,12 @@ void ImageUserInterface::drawText(const char* text, const rect& boundary)
 	}
 }
 
-void ImageUserInterface::drawCellAtDrawingHead(const Cell& cell)
+void ImageUserInterface::drawCellAtDrawingHead()
 {
 	moveCursor(drawingHeadPos);
+	uvec2d& ul = cellBufferElement.bounds.ul;
+	uvec2d imagePos = { drawingHeadPos.x - ul.x, drawingHeadPos.y - ul.y + 1 };
+	Cell cell = ((Cell*)cellBufferElement.data)[imagePos.y * imageSize.x + imagePos.x];
 
 	int mod = ((int)cell.color > 100) ? 1 : 0;
 	int color = (int)cell.color & 0x7F;
@@ -197,15 +201,15 @@ void ImageUserInterface::drawCellAtDrawingHead(const Cell& cell)
 	printf("\033[%d;%dm%c\033[1D\033[0m", mod, color, cell.ch);
 }
 
-void ImageUserInterface::drawCells(const Cell* cells, const uvec2d& imageSize)
+void ImageUserInterface::drawCells(const Cell* cells)
 {
 	uvec2d canvasSize = getCanvasSize();
 	rect& bound = cellBufferElement.bounds;
 	moveCursor(bound.ul);
 
-	for (unsigned y = 0; y < imageSize.y; y++)
+	for (unsigned y = 0; y < imageSize.y && y < canvasSize.y; y++)
 	{
-		for (unsigned x = 0; x < imageSize.x; x++)
+		for (unsigned x = 0; x < imageSize.x && x < canvasSize.x; x++)
 		{
 			Cell curr = cells[y * imageSize.x + x];
 

@@ -16,15 +16,13 @@ DiskIOManager::DiskIOManager()
 unsigned DiskIOManager::appendToBuffer(char*& dst, unsigned dstlen,
 										   const char* src, unsigned srclen)
 {
-	char* res = new char[dstlen + srclen + 1]{};
+	char* res = new char[dstlen + srclen]{};
 
 	for (unsigned i = 0; i < dstlen; i++)
 		res[i] = dst[i];
 
 	for (unsigned i = 0; i < srclen; i++)
 		res[dstlen + i] = src[i];
-
-	res[dstlen + srclen] = '\0';
 
 	delete[] dst;
 	dst = res;
@@ -60,16 +58,18 @@ Document* DiskIOManager::openDocument(const char* filepath, DocumentFileSpec* fi
 	if (!ifstr.is_open())
 		return nullptr;
 
+	const unsigned CLUSTER_SIZE = 2048;
 	char* buffer = nullptr;
-	char* tmp = new char[1024]{};
+	char* tmp = new char[CLUSTER_SIZE]{};
 	unsigned streamsize = 0;
-	unsigned readsize = -1;
 
-	while (!ifstr.eof() && readsize != 0)
+	while (!ifstr.eof())
 	{
-		memset(tmp, 0, 1024);
-		readsize = ifstr.readsome(tmp, 1024);
-		streamsize = appendToBuffer(buffer, streamsize, tmp, readsize);
+		memset(tmp, 0, CLUSTER_SIZE);
+		unsigned readsize = ifstr.readsome(tmp, CLUSTER_SIZE);
+		if (readsize == 0)
+			break;
+		streamsize = appendToBuffer(buffer, streamsize, tmp, readsize - 1);
 	}
 
 	ifstr.close();

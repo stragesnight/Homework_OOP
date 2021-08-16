@@ -27,7 +27,7 @@ unsigned ImageDocumentFileSpec::appendToBuffer(char*& dst, unsigned dstlen,
 
 void ImageDocumentFileSpec::copyBuffer(char*& dst, const char*& src, unsigned len)
 {
-	for (; len >= 0; len--, dst++, src++)
+	for (; len > 0; len--, dst++, src++)
 		*dst = *src;
 }
 
@@ -54,20 +54,18 @@ unsigned ImageDocumentFileSpec::getSaveData(char*& buffer)
 	if (buffer != nullptr)
 		delete[] buffer;
 
-	ImageDocument* parent = (ImageDocument*)parent;
+	ImageDocument* pParent = ((ImageDocument*)parent);
 	unsigned bufflen = 0;
 
 	const char magic[] = "<IMAGEDOCUMENT>\n";
 	bufflen = appendToBuffer(buffer, 0, magic, strlen(magic));
 
-	const uvec2d& imageSize = parent->getSize();
+	const uvec2d& imageSize = pParent->getSize();
 	bufflen = appendToBuffer(buffer, bufflen, (const char*)&imageSize, sizeof(uvec2d));
 
-	const char* cellBuffer = (const char*)parent->getCells();
-	if (cellBuffer == nullptr)
-		return bufflen;
+	const char* cellBuffer = (const char*)pParent->getCells();
 	unsigned cellBufferLength = sizeof(ImageDocument::Cell) * imageSize.x * imageSize.y;
-	//appendToBuffer(buffer, bufflen, cellBuffer, cellBufferLength);
+	bufflen = appendToBuffer(buffer, bufflen, cellBuffer, cellBufferLength);
 
 	return bufflen;
 }
@@ -80,17 +78,21 @@ Document* ImageDocumentFileSpec::parseData(const char* buffer)
 		return nullptr;
 	}
 
-	ImageDocument* parent = ((ImageDocument*)parent);
+	buffer++;
 
-	uvec2d size = {};
+	ImageDocument* pParent = ((ImageDocument*)parent);
+
+	uvec2d size = { 0, 0 };
 	char* pSize = (char*)&size;
-	copyBuffer(pSize, buffer, sizeof(uvec2d));
-	parent->setSize(size);
+	copyBuffer(pSize, buffer, sizeof(size));
+	pParent->setSize(size);
+
+	buffer++;
 
 	ImageDocument::Cell* cellBuffer = new ImageDocument::Cell[size.x * size.y + 1];
 	char* pCellBuffer = (char*)cellBuffer;
-	copyBuffer(pCellBuffer, buffer, size.x * size.y);
-	parent->setCells(cellBuffer);
+	copyBuffer(pCellBuffer, buffer, sizeof(ImageDocument::Cell) * size.x * size.y);
+	pParent->setCells(cellBuffer);
 
 	return parent;
 }
@@ -112,14 +114,14 @@ int ImageDocumentEditor::editDocument(char input)
 	ImageUserInterface* iui = (ImageUserInterface*)ImageUserInterface::getInstance();
 	UserInputManager* uim = UserInputManager::getInstance();
 	ImageDocument* pParent = (ImageDocument*)parent;
-	uvec2d canvasSize = iui->getCanvasSize();
+	const uvec2d imageSize = pParent->getSize();
 
 	switch (input)
 	{
 	// navigation
 	case 's':
 	case 'j':
-		if (drawingHeadPos.y < canvasSize.y - 1)
+		if (drawingHeadPos.y < imageSize.y - 1)
 			drawingHeadPos.y++;
 		break;
 	case 'w':
@@ -129,7 +131,7 @@ int ImageDocumentEditor::editDocument(char input)
 		break;
 	case 'd':
 	case 'l':
-		if (drawingHeadPos.x < canvasSize.x - 1)
+		if (drawingHeadPos.x < imageSize.x - 1)
 			drawingHeadPos.x++;
 		break;
 	case 'a':

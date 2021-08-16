@@ -5,11 +5,8 @@
 
 Document* ImageDocumentFactory::createDocument(const char* name)
 {
-	ImageUserInterface* iui = (ImageUserInterface*)ImageUserInterface::getInstance();
-	ImageDocument* toAdd = new ImageDocument(name, iui->getCanvasSize());
-
+	ImageDocument* toAdd = new ImageDocument(name, {64, 16});
 	addDocument(toAdd);
-
 	return toAdd;
 }
 
