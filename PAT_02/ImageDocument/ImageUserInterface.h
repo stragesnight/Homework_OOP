@@ -3,6 +3,8 @@
 #include "../UserInterface.h"
 #include "ImageDocument.h"
 
+using Cell = ImageDocument::Cell;
+
 
 enum class TUIElement : unsigned char
 {
@@ -15,6 +17,7 @@ class ImageUserInterface : public UserInterface
 {
 private:
 	uvec2d screenSize;
+	uvec2d drawingHeadPos;
 
 	unsigned char queueFlags;
 
@@ -29,22 +32,23 @@ private:
 	element commandLineElement;
 	element statusLineElement;
 
-	element* UIElements[3];
-
 public:
 	ImageUserInterface();
 	~ImageUserInterface() override {}
 
-	const uvec2d& getCanvasSize();
+	uvec2d getCanvasSize();
 
 	void clearScreen();
 	void moveCursor(const uvec2d& pos);
+	void moveDrawingHead(const uvec2d& pos);
 
 	int draw() override;
 	void drawLine(const uvec2d& from, const uvec2d& to, char body);
 	void drawPipe(const uvec2d& from, const uvec2d& to, char body);
 	void drawBox(const rect& box, char body, char border);
-	void drawCells(const ImageDocument::Cell* cells, const rect& boudary);
+	void drawText(const char* text, const rect& boudary);
+	void drawCellAtDrawingHead(const Cell& cell);
+	void drawCells(const Cell* cells, const rect& bound);
 
 	void enqueueData(TUIElement flag, const char* data);
 	bool isEnqueued(TUIElement flag);

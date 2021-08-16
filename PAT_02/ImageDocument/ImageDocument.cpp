@@ -20,6 +20,15 @@ ImageDocument::~ImageDocument()
 	size = { 0, 0 };
 }
 
+void ImageDocument::fill(const rect& box, const Cell& cell)
+{
+	for (unsigned y = box.ul.y; y < box.lr.y; y++)
+	{
+		for (unsigned x = box.ul.x; x < box.lr.x; x++)
+			cellBuffer[y * size.x + x] = cell;
+	}
+}
+
 uvec2d ImageDocument::clampToSize(const uvec2d& pos)
 {
 	return uvec2d{

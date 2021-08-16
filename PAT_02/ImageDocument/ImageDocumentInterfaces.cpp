@@ -106,13 +106,20 @@ int ImageDocumentRenderer::draw()
 }
 
 
+ImageDocumentEditor::ImageDocumentEditor(Document* parent)
+	: DocumentEditor(parent)
+{
+	drawingHeadPos = { 0, 0 };
+}
+
+
 int ImageDocumentEditor::editDocument(char input)
 {
 	switch (input)
 	{
 	default:
-		char buff[128]{};
-		snprintf(buff, 128, "unhandled input \'%c\'", input);
+		char buff[256]{};
+		snprintf(buff, 256, "unhandled input \'%c\'", input);
 		((ImageUserInterface*)ImageUserInterface::getInstance())
 			->enqueueData(TUIElement::statusLine, buff);
 		break;

@@ -1,26 +1,20 @@
-﻿#include "TextSessionManager.h"
+﻿#include "ImageSessionManager.h"
 
-#include "TextDocument.h"
-#include "TextDocumentFactory.h"
-#include "TextUserInterface.h"
+#include "ImageDocument.h"
+#include "ImageDocumentFactory.h"
+#include "ImageUserInterface.h"
 #include "../UserInputManager.h"
 #include "../DocumentIO.h"
 
 #include <stdio.h>
 #include <string.h>
 
-TextUserInterface* tui = ((TextUserInterface*)TextUserInterface::getInstance());
-
-#if defined (_WIN32) or defined (_WIN64)
-# define sprintfPI snprintf
-#else
-# define sprintfPI snprintf
-#endif
+ImageUserInterface* tui = ((ImageUserInterface*)ImageUserInterface::getInstance());
 
 // exit session
 int c_exit(const char*)
 {
-	TextSessionManager::getInstance()->stopSession();
+	ImageSessionManager::getInstance()->stopSession();
 	return 0;
 }
 
@@ -36,11 +30,11 @@ int c_selectDocument(const char* arg)
 	tui->clearScreen();
 #else
 	char buff[256]{};
-	sprintfPI(buff, 256, "selected document \"%s\".", arg);
+	snprintf(buff, 256, "selected document \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
 #endif
 
-	TextSessionManager::getInstance()->selectDocument(arg);
+	ImageSessionManager::getInstance()->selectDocument(arg);
 	return 0;
 }
 
@@ -56,13 +50,14 @@ int c_openDocument(const char* arg)
 	tui->clearScreen();
 #else
 	char buff[256]{};
-	sprintfPI(buff, 256, "opened document \"%s\".", arg);
+	snprintf(buff, 256, "opened document \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
 #endif
 
-	TextDocument* newDoc = new TextDocument(arg);
+	uvec2d canvasSize = tui->getCanvasSize();
+	ImageDocument* newDoc = new ImageDocument(arg, canvasSize);
 
-	SessionManager* instance = TextSessionManager::getInstance();
+	SessionManager* instance = ImageSessionManager::getInstance();
 	instance->getDocumentFactory()->openDocument(arg, newDoc->getFileSpec());
 	instance->selectDocument(arg);
 
@@ -80,9 +75,9 @@ int c_setDocumentName(const char* arg)
 	tui->enqueueData(TUIElement::statusLine, "document name changed.");
 #else
 	char buff[256]{};
-	sprintfPI(buff, 256, "current document name is set to \"%s\".", arg);
+	snprintf(buff, 256, "current document name is set to \"%s\".", arg);
 	tui->enqueueData(TUIElement::statusLine, buff);
-	TextSessionManager::getInstance()->getSelectedDocument()->setName(arg);
+	ImageSessionManager::getInstance()->getSelectedDocument()->setName(arg);
 #endif
 
 	return 0;
@@ -97,8 +92,10 @@ int c_closeDocument(const char*)
 	tui->clearScreen();
 #endif
 
-	SessionManager* instance = TextSessionManager::getInstance();
-	instance->getDocumentFactory()->closeDocument(instance->getSelectedDocument()->getName());
+	SessionManager* instance = ImageSessionManager::getInstance();
+	instance->getDocumentFactory()->closeDocument(
+		instance->getSelectedDocument()->getName()
+	);
 	instance->selectDocumentByIndex(0);
 	return 0;
 }
@@ -113,7 +110,7 @@ int c_saveDocument(const char*)
 	tui->enqueueData(TUIElement::statusLine, "current document saved.");
 #else
 	char buff[256]{};
-	sprintfPI(buff, 256, "saved current document as \"%s\".", selected->getName());
+	snprintf(buff, 256, "saved current document as \"%s\".", selected->getName());
 	tui->enqueueData(TUIElement::statusLine, buff);
 #endif
 
@@ -133,7 +130,7 @@ int c_refreshScreen(const char*)
 
 SessionManager* SessionManager::instance = nullptr;
 
-TextSessionManager::TextSessionManager() : SessionManager()
+ImageSessionManager::ImageSessionManager() : SessionManager()
 {
 	if (instance != nullptr)
 		return;
@@ -141,7 +138,7 @@ TextSessionManager::TextSessionManager() : SessionManager()
 	instance = this;
 
 	sessionCommands = new std::map<std::string, int(*)(const char*)>();
-	documentFactory = new TextDocumentFactory();
+	documentFactory = new ImageDocumentFactory();
 
 	(*sessionCommands)["exit"] = c_exit;
 	(*sessionCommands)["select"] = c_selectDocument;
@@ -151,15 +148,15 @@ TextSessionManager::TextSessionManager() : SessionManager()
 	(*sessionCommands)["save"] = c_saveDocument;
 	(*sessionCommands)["refresh"] = c_refreshScreen;
 
-	tui = ((TextUserInterface*)TextUserInterface::getInstance());
+	tui = ((ImageUserInterface*)ImageUserInterface::getInstance());
 }
 
-TextSessionManager::~TextSessionManager()
+ImageSessionManager::~ImageSessionManager()
 {
 	delete sessionCommands;
 }
 
-int TextSessionManager::update()
+int ImageSessionManager::update()
 {
 	int success = 0;
 # 	define update_assert(func) \
@@ -181,13 +178,14 @@ int TextSessionManager::update()
 	return 0;
 }
 
-int TextSessionManager::processInput(char input)
+int ImageSessionManager::processInput(char input)
 {
 	switch (input)
 	{
 	case '/':
 		if (processCommand() != 0)
-			tui->enqueueData(TUIElement::commandLine, "invalid command and/or arguments!");
+			tui->enqueueData(TUIElement::commandLine, 
+					"invalid command and/or arguments!");
 		return 1;
 	default:
 		return 0;
@@ -196,7 +194,7 @@ int TextSessionManager::processInput(char input)
 	return 0;
 }
 
-int TextSessionManager::processCommand()
+int ImageSessionManager::processCommand()
 {
 	char comBuff[256] {};
 	char argBuff[256] {};
@@ -243,7 +241,7 @@ int TextSessionManager::processCommand()
 	return callback(argBuff);
 }
 
-int TextSessionManager::startSession()
+int ImageSessionManager::startSession()
 {
 	int exitcode = 0;
 

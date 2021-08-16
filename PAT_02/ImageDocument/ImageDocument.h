@@ -25,11 +25,14 @@ enum class c_color : unsigned char
 };
 
 
+#ifndef UVEC2D
+# define UVEC2D
 struct uvec2d
 {
 	unsigned x;
 	unsigned y;
 };
+#endif
 
 struct rect
 {
@@ -51,7 +54,7 @@ private:
 	uvec2d size;
 	Cell* cellBuffer;
 
-	void fill(const rect& rect, const Cell& cell);
+	void fill(const rect& box, const Cell& cell);
 
 	uvec2d clampToSize(const uvec2d& pos);
 

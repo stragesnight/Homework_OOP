@@ -28,13 +28,22 @@ public:
 	int draw() override;
 };
 
+#ifndef UVEC2D
+# define UVEC2D
+struct uvec2d
+{
+	unsigned x;
+	unsigned y;
+};
+#endif
 
 class ImageDocumentEditor : public DocumentEditor
 {
+private:
+	uvec2d drawingHeadPos;
+
 public:
-	ImageDocumentEditor(Document* parent)
-		: DocumentEditor(parent)
-	{}
+	ImageDocumentEditor(Document* parent);
 	int editDocument(char input) override;
 };
 
