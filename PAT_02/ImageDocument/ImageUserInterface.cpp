@@ -69,6 +69,7 @@ int ImageUserInterface::draw()
 		drawText(statusLineElement.data, statusLineElement.bounds);
 	}
 
+	moveCursor(drawingHeadPos);
 	if (isEnqueued(TUIElement::cellBuffer))
 		drawCellAtDrawingHead();
 
@@ -195,10 +196,17 @@ void ImageUserInterface::drawCellAtDrawingHead()
 	uvec2d imagePos = { drawingHeadPos.x - ul.x, drawingHeadPos.y - ul.y + 1 };
 	Cell cell = ((Cell*)cellBufferElement.data)[imagePos.y * imageSize.x + imagePos.x];
 
-	int mod = ((int)cell.color > 100) ? 1 : 0;
-	int color = (int)cell.color & 0x7F;
-	
-	printf("\033[%d;%dm%c\033[1D\033[0m", mod, color, cell.ch);
+#if defined (_WIN32) or defined (_WIN64)
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, (curr.bg << 1) + curr.fg);
+	putchar('\b');
+	SetConsoleTextAttribute(hConsole, 0F);
+#else
+	int mod = ((int)cell.fg > 100) ? 1 : 0;
+	int fg = (int)cell.fg & 0x7F;
+	int bg = ((int)cell.bg & 0x7F) + 10;
+	printf("\033[%d;%d;%dm%c\033[1D\033[0m", mod, fg, bg, cell.ch);
+#endif
 }
 
 void ImageUserInterface::drawCells(const Cell* cells)
@@ -207,21 +215,34 @@ void ImageUserInterface::drawCells(const Cell* cells)
 	rect& bound = cellBufferElement.bounds;
 	moveCursor(bound.ul);
 
+#if defined (_WIN32) or defined (_WIN64)
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
+
 	for (unsigned y = 0; y < imageSize.y && y < canvasSize.y; y++)
 	{
 		for (unsigned x = 0; x < imageSize.x && x < canvasSize.x; x++)
 		{
 			Cell curr = cells[y * imageSize.x + x];
 
-			int mod = ((int)curr.color > 100) ? 1 : 0;
-			int color = (int)curr.color & 0x7F;
-			printf("\033[%d;%dm%c", mod, color, curr.ch);
+#if defined (_WIN32) or defined (_WIN64)
+			SetConsoleTextAttribute(hConsole, (curr.bg << 1) + curr.fg);
+#else
+			int mod = ((int)curr.fg > 100) ? 1 : 0;
+			int fg = (int)curr.fg & 0x7F;
+			int bg = ((int)curr.bg & 0x7F) + 10;
+			printf("\033[%d;%d;%dm%c", mod, fg, bg, curr.ch);
+#endif
 		}
 
 		moveCursor({bound.ul.x, bound.ul.y + y});
 	}
 
+#if defined (_WIN32) or defined (_WIN64)
+	SetConsoleTextAttribute(hConsole, 0F);
+#else
 	printf("\033[0m");
+#endif
 }
 
 void ImageUserInterface::enqueueData(TUIElement flag, const char* data)

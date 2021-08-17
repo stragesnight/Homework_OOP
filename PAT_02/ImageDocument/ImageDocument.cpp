@@ -11,7 +11,7 @@ ImageDocument::ImageDocument(const char* name, uvec2d size)
 	this->size = size;
 	this->cellBuffer = new Cell[size.x * size.y + 1];
 
-	fill(rect{{0, 0}, size}, Cell{'.', c_color::purple});
+	fill(rect{{0, 0}, size}, Cell{'.', c_color::black, c_color::white});
 }
 
 ImageDocument::~ImageDocument()
@@ -58,9 +58,14 @@ char ImageDocument::getChar(const uvec2d& pos)
 	return getCell(pos).ch;
 }
 
-c_color ImageDocument::getColor(const uvec2d& pos)
+c_color ImageDocument::getBGColor(const uvec2d& pos)
 {
-	return getCell(pos).color;
+	return getCell(pos).bg;
+}
+
+c_color ImageDocument::getFGColor(const uvec2d& pos)
+{
+	return getCell(pos).fg;
 }
 
 void ImageDocument::setSize(const uvec2d& size)
@@ -71,7 +76,7 @@ void ImageDocument::setSize(const uvec2d& size)
 		delete[] cellBuffer;
 
 	cellBuffer = new Cell[size.x * size.y + 1]{};
-	fill(rect{{0, 0}, size}, Cell{'.', c_color::purple});
+	fill(rect{{0, 0}, size}, Cell{'.', c_color::black, c_color::white});
 }
 
 void ImageDocument::setCell(const uvec2d& pos, const Cell& cell)
@@ -91,9 +96,15 @@ void ImageDocument::setChar(const uvec2d& pos, char ch)
 	cellBuffer[clamped.y * size.x + clamped.x].ch = ch;
 }
 
-void ImageDocument::setColor(const uvec2d& pos, c_color color)
+void ImageDocument::setBGColor(const uvec2d& pos, c_color color)
 {
 	uvec2d clamped = clampToSize(pos);
-	cellBuffer[clamped.y * size.x + clamped.x].color = color;
+	cellBuffer[clamped.y * size.x + clamped.x].bg = color;
+}
+
+void ImageDocument::setFGColor(const uvec2d& pos, c_color color)
+{
+	uvec2d clamped = clampToSize(pos);
+	cellBuffer[clamped.y * size.x + clamped.x].fg = color;
 }
 
