@@ -103,11 +103,92 @@ int ImageDocumentRenderer::draw()
 	const char* buff = (const char*)((ImageDocument*)parent)->getCells();
 	ImageUserInterface* tui = ((ImageUserInterface*)ImageUserInterface::getInstance());
 
-	tui->enqueueData(TUIElement::cellBuffer, buff);
+	//tui->enqueueData(TUIElement::cellBuffer, buff);
 
 	return 0;
 }
 
+void changeBGColor(ImageDocument* pParent, const uvec2d& drawingHeadPos, char input)
+{
+	switch (input)
+	{
+	case '1': pParent->setBGColor(drawingHeadPos, c_color::black);
+		break;
+	case '2': pParent->setBGColor(drawingHeadPos, c_color::red);
+		break;
+	case '3': pParent->setBGColor(drawingHeadPos, c_color::green);
+		break;
+	case '4': pParent->setBGColor(drawingHeadPos, c_color::yellow);
+		break;
+	case '5': pParent->setBGColor(drawingHeadPos, c_color::blue);
+		break;
+	case '6': pParent->setBGColor(drawingHeadPos, c_color::purple);
+		break;
+	case '7': pParent->setBGColor(drawingHeadPos, c_color::cyan);
+		break;
+	case '8': pParent->setBGColor(drawingHeadPos, c_color::white);
+		break;
+	case '!': pParent->setBGColor(drawingHeadPos, c_color::b_black);
+		break;
+	case '@': pParent->setBGColor(drawingHeadPos, c_color::b_red);
+		break;
+	case '#': pParent->setBGColor(drawingHeadPos, c_color::b_green);
+		break;
+	case '$': pParent->setBGColor(drawingHeadPos, c_color::b_yellow);
+		break;
+	case '%': pParent->setBGColor(drawingHeadPos, c_color::b_blue);
+		break;
+	case '^': pParent->setBGColor(drawingHeadPos, c_color::b_purple);
+		break;
+	case '&': pParent->setBGColor(drawingHeadPos, c_color::b_cyan);
+		break;
+	case '*': pParent->setBGColor(drawingHeadPos, c_color::b_white);
+		break;
+	default:
+		break;
+	}
+}
+
+void changeFGColor(ImageDocument* pParent, const uvec2d& drawingHeadPos, char input)
+{
+	switch (input)
+	{
+	case '1': pParent->setFGColor(drawingHeadPos, c_color::black);
+		break;
+	case '2': pParent->setFGColor(drawingHeadPos, c_color::red);
+		break;
+	case '3': pParent->setFGColor(drawingHeadPos, c_color::green);
+		break;
+	case '4': pParent->setFGColor(drawingHeadPos, c_color::yellow);
+		break;
+	case '5': pParent->setFGColor(drawingHeadPos, c_color::blue);
+		break;
+	case '6': pParent->setFGColor(drawingHeadPos, c_color::purple);
+		break;
+	case '7': pParent->setFGColor(drawingHeadPos, c_color::cyan);
+		break;
+	case '8': pParent->setFGColor(drawingHeadPos, c_color::white);
+		break;
+	case '!': pParent->setFGColor(drawingHeadPos, c_color::b_black);
+		break;
+	case '@': pParent->setFGColor(drawingHeadPos, c_color::b_red);
+		break;
+	case '#': pParent->setFGColor(drawingHeadPos, c_color::b_green);
+		break;
+	case '$': pParent->setFGColor(drawingHeadPos, c_color::b_yellow);
+		break;
+	case '%': pParent->setFGColor(drawingHeadPos, c_color::b_blue);
+		break;
+	case '^': pParent->setFGColor(drawingHeadPos, c_color::b_purple);
+		break;
+	case '&': pParent->setFGColor(drawingHeadPos, c_color::b_cyan);
+		break;
+	case '*': pParent->setFGColor(drawingHeadPos, c_color::b_white);
+		break;
+	default:
+		break;
+	}
+}
 
 int ImageDocumentEditor::editDocument(char input)
 {
@@ -119,23 +200,19 @@ int ImageDocumentEditor::editDocument(char input)
 	switch (input)
 	{
 	// navigation
-	case 's':
-	case 'j':
+	case 's': case 'j':
 		if (drawingHeadPos.y < imageSize.y - 1)
 			drawingHeadPos.y++;
 		break;
-	case 'w':
-	case 'k':
+	case 'w': case 'k':
 		if (drawingHeadPos.y > 1)
 			drawingHeadPos.y--;
 		break;
-	case 'd':
-	case 'l':
+	case 'd': case 'l':
 		if (drawingHeadPos.x < imageSize.x - 1)
 			drawingHeadPos.x++;
 		break;
-	case 'a':
-	case 'h':
+	case 'a': case 'h':
 		if (drawingHeadPos.x > 0)
 			drawingHeadPos.x--;
 		break;
@@ -147,8 +224,16 @@ int ImageDocumentEditor::editDocument(char input)
 		iui->enqueueData(TUIElement::cellBuffer, (const char*)pParent->getCells());
 		break;
 	}
-	// change color
-	case 'r':
+	// change background color
+	case 'b':
+		uim->recieveInput();
+		changeBGColor(pParent, drawingHeadPos, uim->lastInput());
+		iui->enqueueData(TUIElement::cellBuffer, (const char*)pParent->getCells());
+		break;
+	// change foreground color
+	case 'f':
+		uim->recieveInput();
+		changeFGColor(pParent, drawingHeadPos, uim->lastInput());
 		iui->enqueueData(TUIElement::cellBuffer, (const char*)pParent->getCells());
 		break;
 	default:

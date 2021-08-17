@@ -11,7 +11,7 @@ ImageDocument::ImageDocument(const char* name, uvec2d size)
 	this->size = size;
 	this->cellBuffer = new Cell[size.x * size.y + 1];
 
-	fill(rect{{0, 0}, size}, Cell{'.', c_color::black, c_color::white});
+	fill(rect{{0, 0}, size}, Cell{' ', c_color::black, c_color::white});
 }
 
 ImageDocument::~ImageDocument()
@@ -76,7 +76,7 @@ void ImageDocument::setSize(const uvec2d& size)
 		delete[] cellBuffer;
 
 	cellBuffer = new Cell[size.x * size.y + 1]{};
-	fill(rect{{0, 0}, size}, Cell{'.', c_color::black, c_color::white});
+	fill(rect{{0, 0}, size}, Cell{' ', c_color::black, c_color::white});
 }
 
 void ImageDocument::setCell(const uvec2d& pos, const Cell& cell)
