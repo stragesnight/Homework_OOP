@@ -1,0 +1,25 @@
+The name of the company: apple
+The owner of the company: tim cook
+The phone number of the company: 11111111111
+The address of the company: Cupertino, California, USA
+The type of activity of the company: Computer, hardware, software
+The name of the company: google
+The owner of the company: sundar pichai
+The phone number of the company: 22222222222
+The address of the company: Mountain View, California, USA
+The type of activity of the company: Internet, Cloud computing, software, hardware
+The name of the company: amazon
+The owner of the company: jeff bezos
+The phone number of the company: 33333333333
+The address of the company: Bellevue, Washington, USA
+The type of activity of the company: Cloud computing, e-commerce, electronics
+The name of the company: tesla
+The owner of the company: elon musk
+The phone number of the company: 44444444444
+The address of the company: Palo Alto, California, USA
+The type of activity of the company: Automotive industry
+The name of the company: sony
+The owner of the company: shuzo sumi
+The phone number of the company: 55555555555
+The address of the company: Minato, Tokyo, Japan
+The type of activity of the company: Films, Music, Computer hardware, Robots
