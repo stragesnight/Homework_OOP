@@ -3,7 +3,7 @@
 *.gz
 *.zip
 */*.o
-Debug/*
-*/.cache/*
-.cache/*
+Debug
+.cache
+.cache
 compile_commands.json
